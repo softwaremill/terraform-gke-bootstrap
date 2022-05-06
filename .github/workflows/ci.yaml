@@ -1,0 +1,25 @@
+name: 'Terraform'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v1
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+      - name: Render terraform docs and push changes back to PR
+        uses: terraform-docs/gh-actions@main
+        with:
+          working-dir: .
+          git-push: "true"
