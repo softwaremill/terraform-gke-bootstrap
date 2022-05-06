@@ -29,7 +29,7 @@ module "gke" {
 
 By default, it creates a "private" GKE cluster, but this can be changed setting `enable_private_nodes` to `false`.
 This module is based on opinionated google modules, but combines several modules into "one module to rule them all".
-It uses the `private-cluster-update-variant` submodule of GKE - the version which can creates private cluster and - in case of node pool changes - creates new pool before deleting the old one, which minimizes the downtime of the live system. 
+It uses the `private-cluster-update-variant` submodule of GKE - the version which can creates private cluster and - in case of node pool changes - creates new pool before deleting the old one, which minimizes the downtime of the live system.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

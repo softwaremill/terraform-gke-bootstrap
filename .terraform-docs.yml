@@ -1,4 +1,4 @@
 formatter: "markdown"
 
 output:
-  file: Readme.md
+  file: README.md
