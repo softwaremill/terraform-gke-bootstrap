@@ -40,7 +40,7 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | n/a |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.20.0 |
 
 ## Modules
 
@@ -85,5 +85,6 @@ No requirements.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_gke_endpoint"></a> [gke\_endpoint](#output\_gke\_endpoint) | The kubernetes endpoint |
+| <a name="output_gke_ca_certificate"></a> [gke\_ca\_certificate](#output\_gke\_ca\_certificate) | The kubernetes CA certificate. |
+| <a name="output_gke_endpoint"></a> [gke\_endpoint](#output\_gke\_endpoint) | The kubernetes endpoint. |
 <!-- END_TF_DOCS -->
