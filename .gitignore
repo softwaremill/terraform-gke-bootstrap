@@ -1,0 +1,5 @@
+.idea
+.terragrunt-cache
+.terraform
+.terraform.lock.hcl
+terraform.tfstate*

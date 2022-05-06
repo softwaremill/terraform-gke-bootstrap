@@ -1,0 +1,4 @@
+formatter: "markdown"
+
+output:
+  file: Readme.md
