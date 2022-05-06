@@ -1,3 +1,36 @@
+# Terraform GKE module
+This module creates the GKE cluster with all dependencies: project, network (VPC), subnet etc.
+It can also use existing project - in such case set the `create_project` to `false` and provide the existing `project_id`.
+
+## Usage
+
+The simplest way to use this module:
+
+```terraform
+module "gke" {
+  source = "../../"
+  create_project = false
+  k8s_network_base = "10.100.0.0/16"
+  project_id = "gke-test-project"
+  region = "europe-central2"
+  subnet_network = "10.1.0.0/20"
+  regional = false
+  zones = ["europe-central2-a"]
+  node_pools = [
+    {
+      name = "default-pool"
+      disk_size_gb = 50
+      max_count = 3
+      preemptible = true
+    }
+  ]
+}
+```
+
+By default, it creates a "private" GKE cluster, but this can be changed setting `enable_private_nodes` to `false`.
+This module is based on opinionated google modules, but combines several modules into "one module to rule them all".
+It uses the `private-cluster-update-variant` submodule of GKE - the version which can creates private cluster and - in case of node pool changes - creates new pool before deleting the old one, which minimizes the downtime of the live system.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -7,7 +40,7 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 4.20.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | n/a |
 
 ## Modules
 
@@ -52,6 +85,5 @@ No requirements.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_gke_ca_certificate"></a> [gke\_ca\_certificate](#output\_gke\_ca\_certificate) | The kubernetes CA certificate. |
-| <a name="output_gke_endpoint"></a> [gke\_endpoint](#output\_gke\_endpoint) | The kubernetes endpoint. |
+| <a name="output_gke_endpoint"></a> [gke\_endpoint](#output\_gke\_endpoint) | The kubernetes endpoint |
 <!-- END_TF_DOCS -->
