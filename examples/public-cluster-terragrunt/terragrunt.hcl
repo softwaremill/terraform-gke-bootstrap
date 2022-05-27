@@ -18,5 +18,5 @@ EOF
 }
 
 terraform {
-  source = "git::git@github.com:softwaremill/terraform-gke-bootstrap.git"
+  source = "git::git@github.com:softwaremill/terraform-gke-bootstrap.git//."
 }
