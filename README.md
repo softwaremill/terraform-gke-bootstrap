@@ -40,7 +40,7 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 4.20.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.22.0 |
 
 ## Modules
 
