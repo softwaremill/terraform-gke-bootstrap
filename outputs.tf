@@ -1,5 +1,5 @@
 output "gke_cluster_name" {
-  value = module.kubernetes_engine.name
+  value       = module.kubernetes_engine.name
   description = "Cluster name"
 }
 output "gke_endpoint" {
@@ -11,4 +11,8 @@ output "gke_ca_certificate" {
   value       = module.kubernetes_engine.ca_certificate
   sensitive   = true
   description = "The kubernetes CA certificate"
+}
+output "gke_location" {
+  value       = module.kubernetes_engine.location
+  description = "Location of the cluster"
 }
