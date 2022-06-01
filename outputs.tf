@@ -1,10 +1,14 @@
-output "gke_endpoint" {
+output "gke_cluster_name" {
+  value = module.kubernetes_engine.name
+  description = "Cluster name"
+}
+output "endpoint" {
   value       = module.kubernetes_engine.endpoint
   sensitive   = true
-  description = "The kubernetes endpoint."
+  description = "The kubernetes endpoint"
 }
-output "gke_ca_certificate" {
+output "ca_certificate" {
   value       = module.kubernetes_engine.ca_certificate
   sensitive   = true
-  description = "The kubernetes CA certificate."
+  description = "The kubernetes CA certificate"
 }
