@@ -16,3 +16,7 @@ output "gke_location" {
   value       = module.kubernetes_engine.location
   description = "Location of the cluster"
 }
+output "project_id" {
+  value = local.project_id
+  description = "ID of the project containing the cluster"
+}
