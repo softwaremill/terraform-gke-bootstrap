@@ -17,6 +17,6 @@ output "gke_location" {
   description = "Location of the cluster"
 }
 output "project_id" {
-  value = local.project_id
+  value       = local.project_id
   description = "ID of the project containing the cluster"
 }

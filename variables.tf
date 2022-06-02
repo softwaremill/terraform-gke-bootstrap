@@ -97,7 +97,7 @@ variable "activate_apis" {
   description = "List of Google APIs activated in new or existing project."
 }
 variable "gcr_location" {
-  type = string
-  default = "EU"
+  type        = string
+  default     = "EU"
   description = "Location of the GCR bucket."
 }
