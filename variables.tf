@@ -44,7 +44,7 @@ variable "platform_name" {
   type        = string
   description = "The name of the platform. Many resource names are based on this (VPC, subnet, GKE cluster etc)."
   validation {
-    condition     = length(var.platform_name) < 25 && length(var.project_name) > 4
+    condition     = length(var.platform_name) < 25 && length(var.platform_name) > 4
     error_message = "The platform name should contain only 25 characters. Last 5 characters up to 30 total are generated"
   }
 }
