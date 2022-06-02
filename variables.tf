@@ -35,6 +35,10 @@ variable "release_channel" {
   type        = string
   default     = "UNSPECIFIED"
   description = "The GKE release channel."
+  validation {
+    condition     = contains(["UNSPECIFIED", "RAPID", "STABLE"], var.release_channel)
+    error_message = "Valid values for var: test_variable are (UNSPECIFIED, RAPID, STABLE)"
+  }
 }
 variable "platform_name" {
   type        = string
