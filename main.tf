@@ -84,3 +84,8 @@ module "kubernetes_engine" {
   depends_on                 = [module.project]
   master_authorized_networks = var.master_authorized_networks
 }
+
+resource "google_container_registry" "registry" {
+  project  = local.project_id
+  location = var.gcr_location
+}

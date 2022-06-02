@@ -40,7 +40,11 @@ No requirements.
 
 | Name | Version |
 |------|---------|
+<<<<<<< feat/ci-checkout-step-refactor
 | <a name="provider_google"></a> [google](#provider\_google) | 4.22.0 |
+=======
+| <a name="provider_google"></a> [google](#provider\_google) | 4.23.0 |
+>>>>>>> main
 
 ## Modules
 
@@ -85,6 +89,8 @@ No requirements.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_gke_ca_certificate"></a> [gke\_ca\_certificate](#output\_gke\_ca\_certificate) | The kubernetes CA certificate. |
-| <a name="output_gke_endpoint"></a> [gke\_endpoint](#output\_gke\_endpoint) | The kubernetes endpoint. |
+| <a name="output_gke_ca_certificate"></a> [gke\_ca\_certificate](#output\_gke\_ca\_certificate) | The kubernetes CA certificate |
+| <a name="output_gke_cluster_name"></a> [gke\_cluster\_name](#output\_gke\_cluster\_name) | Cluster name |
+| <a name="output_gke_endpoint"></a> [gke\_endpoint](#output\_gke\_endpoint) | The kubernetes endpoint |
+| <a name="output_gke_location"></a> [gke\_location](#output\_gke\_location) | Location of the cluster |
 <!-- END_TF_DOCS -->
