@@ -21,6 +21,10 @@ variable "project_id" {
   type        = string
   default     = ""
   description = "Existing project id. Required if `create_project` set to `false`"
+  validation {
+    condition = can(regex("^[a-z]{1}[0-9a-z-]{5,29}$", var.project_id))
+    error_message = "The project id must be 6 to 30 characters in length, can only contain lowercase letters, numbers, and hyphens"
+  }
 }
 variable "project_name" {
   type        = string
