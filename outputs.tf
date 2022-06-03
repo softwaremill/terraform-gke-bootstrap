@@ -24,3 +24,7 @@ output "vpc_name" {
   value       = module.network.network_name
   description = "Name of the created VPC (network)"
 }
+output "vpc_id" {
+  value       = module.network.network_id
+  description = "VPC (network) ID"
+}
