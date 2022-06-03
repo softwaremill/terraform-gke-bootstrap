@@ -14,6 +14,9 @@ generate "providers" {
   contents  = <<EOF
 provider "google" {
 }
+
+provider "google-beta" {
+}
 EOF
 }
 

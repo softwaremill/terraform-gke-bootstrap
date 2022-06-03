@@ -6,7 +6,7 @@ variable "create_project" {
 variable "billing_account" {
   type        = string
   default     = ""
-  description = "The billing account to witch the new project should be connected. Required if `create_project` set to `true`."
+  description = "YOU NEED TO HAVE PERMISSION TO BILLING ACCOUNT, The billing account to witch the new project should be connected. Required if `create_project` set to `true`."
 }
 variable "org_id" {
   type        = string
@@ -21,20 +21,36 @@ variable "project_id" {
   type        = string
   default     = ""
   description = "Existing project id. Required if `create_project` set to `false`"
+  validation {
+    condition     = can(regex("^[a-z]{1}[0-9a-z-]{5,29}$", var.project_id))
+    error_message = "The project id must be 6 to 30 characters in length, can only contain lowercase letters, numbers, and hyphens"
+  }
 }
 variable "project_name" {
   type        = string
   default     = ""
   description = "The name of the created project. Defaults to `platform_name` if not set."
+  validation {
+    condition     = length(var.project_name) < 25 && length(var.project_name) > 4
+    error_message = "The project name should contain only 25 characters. Last 5 characters up to 30 total are generated"
+  }
 }
 variable "release_channel" {
   type        = string
   default     = "UNSPECIFIED"
   description = "The GKE release channel."
+  validation {
+    condition     = contains(["UNSPECIFIED", "RAPID", "STABLE"], var.release_channel)
+    error_message = "Valid values for var: test_variable are (UNSPECIFIED, RAPID, STABLE)"
+  }
 }
 variable "platform_name" {
   type        = string
   description = "The name of the platform. Many resource names are based on this (VPC, subnet, GKE cluster etc)."
+  validation {
+    condition     = length(var.platform_name) < 25 && length(var.platform_name) > 4
+    error_message = "The platform name should contain only 25 characters. Last 5 characters up to 30 total are generated"
+  }
 }
 variable "subnet_network" {
   type        = string
