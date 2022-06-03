@@ -20,3 +20,7 @@ output "project_id" {
   value       = local.project_id
   description = "ID of the project containing the cluster"
 }
+output "vpc_name" {
+  value       = module.network.network_name
+  description = "Name of the created VPC (network)"
+}
