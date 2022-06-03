@@ -2,6 +2,15 @@
 This module creates the GKE cluster with all dependencies: project, network (VPC), subnet etc.
 It can also use existing project - in such case set the `create_project` to `false` and provide the existing `project_id`.
 
+# Prerequisite
+
+- Before you create GCP project make sure you have right permission to attach billing accounts to created project. 
+That means have at least one of IAM roles attached:
+  - roles/billing.creator
+  - roles/billing.admin
+  - roles/billing.user
+  - roles/billing.projectManager
+
 ## Usage
 
 The simplest way to use this module:
