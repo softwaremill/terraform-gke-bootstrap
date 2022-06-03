@@ -28,6 +28,10 @@ output "vpc_id" {
   value       = module.network.network_id
   description = "VPC (network) ID"
 }
+output "gke_locaton" {
+  value       = module.kubernetes_engine.location
+  description = "Location of the GKE cluster. Region if cluster is regional, zone if zonal"
+}
 output "gke_zones" {
   value       = module.kubernetes_engine.zones
   description = "List of zones where the cluster lives"
