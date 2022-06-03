@@ -91,6 +91,7 @@ No requirements.
 | <a name="output_gke_cluster_name"></a> [gke\_cluster\_name](#output\_gke\_cluster\_name) | Cluster name |
 | <a name="output_gke_endpoint"></a> [gke\_endpoint](#output\_gke\_endpoint) | The kubernetes endpoint |
 | <a name="output_gke_location"></a> [gke\_location](#output\_gke\_location) | Location of the cluster |
+| <a name="output_gke_zone"></a> [gke\_zone](#output\_gke\_zone) | List of zones where the cluster lives |
 | <a name="output_project_id"></a> [project\_id](#output\_project\_id) | ID of the project containing the cluster |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | VPC (network) ID |
 | <a name="output_vpc_name"></a> [vpc\_name](#output\_vpc\_name) | Name of the created VPC (network) |
