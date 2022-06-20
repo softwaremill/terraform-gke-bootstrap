@@ -81,7 +81,7 @@ module "kubernetes_engine" {
   enable_private_endpoint    = var.enable_private_endpoint
   enable_private_nodes       = var.enable_private_nodes
   master_ipv4_cidr_block     = var.master_ipv4_cidr_block
-  depends_on                 = [module.project]
+  depends_on                 = [module.project, module.project_services]
   master_authorized_networks = var.master_authorized_networks
 }
 
