@@ -8,4 +8,8 @@ locals {
   services_network_name = "${local.subnet_name}-services"
   pods_ip_range         = cidrsubnet(var.k8s_network_base, 4, 1)
   services_ip_range     = cidrsubnet(var.k8s_network_base, 4, 2)
+  location              = var.regional ? var.region : var.zones.0
+  node_pool_names       = [for np in toset(var.node_pools) : np.name]
+  node_pools            = zipmap(local.node_pool_names, tolist(toset(var.node_pools)))
+  node_locations        = var.regional ? var.zones : slice(var.zones, 1, length(var.zones))
 }

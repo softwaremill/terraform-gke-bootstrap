@@ -5,7 +5,6 @@ module "gke" {
   org_id           = "204964337255"
   k8s_network_base = "10.100.0.0/16"
   platform_name    = "test-gke"
-  //project_id = "k8s-workshop-348512"
   region         = "europe-central2"
   subnet_network = "10.1.0.0/20"
   regional       = false
