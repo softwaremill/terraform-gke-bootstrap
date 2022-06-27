@@ -78,6 +78,7 @@ module "kubernetes_engine" {
   zones                      = var.zones
   region                     = var.region
   node_pools                 = var.node_pools
+  node_pools_labels          = var.node_pools_labels
   enable_private_endpoint    = var.enable_private_endpoint
   enable_private_nodes       = var.enable_private_nodes
   master_ipv4_cidr_block     = var.master_ipv4_cidr_block

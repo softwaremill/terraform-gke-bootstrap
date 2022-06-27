@@ -63,6 +63,17 @@ variable "node_pools" {
   ]
   description = "List of node pools. To the details refer to https://github.com/terraform-google-modules/terraform-google-kubernetes-engine#node_pools-variable."
 }
+
+variable "node_pools_labels" {
+  type = map(map(string))
+  default = {
+    "default-node-pool" = {
+      "node.pool/name" = "default-node-pool"
+    },
+  }
+  description = "List of node pools labels. https://registry.terraform.io/modules/terraform-google-modules/kubernetes-engine/google/21.1.0/submodules/private-cluster-update-variant?tab=inputs#:~:text=default%2Dnode%2Dpool%22%20%7D%20%5D-,node_pools_labels,-map(map(string"
+}
+
 variable "master_ipv4_cidr_block" {
   type        = string
   default     = "172.16.0.0/28"
