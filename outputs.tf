@@ -2,6 +2,11 @@ output "gke_cluster_name" {
   value       = module.kubernetes_engine.name
   description = "Cluster name"
 }
+output "gke_cluster_id" {
+  value       = module.kubernetes_engine.cluster_id
+  description = "Cluster id"
+}
+
 output "gke_endpoint" {
   value       = module.kubernetes_engine.endpoint
   sensitive   = true
