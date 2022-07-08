@@ -2,6 +2,12 @@ output "gke_cluster_name" {
   value       = google_container_cluster.gke.name
   description = "Cluster name"
 }
+
+output "gke_cluster_id" {
+  value       = google_container_cluster.gke.id
+  description = "Cluster name"
+}
+
 output "gke_endpoint" {
   value       = google_container_cluster.gke.endpoint
   sensitive   = true
