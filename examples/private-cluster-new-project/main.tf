@@ -5,10 +5,10 @@ module "gke" {
   org_id           = "204964337255"
   k8s_network_base = "10.100.0.0/16"
   platform_name    = "test-gke"
-  region         = "europe-central2"
-  subnet_network = "10.1.0.0/20"
-  regional       = false
-  zones          = ["europe-central2-a"]
+  region           = "europe-central2"
+  subnet_network   = "10.1.0.0/20"
+  regional         = false
+  zones            = ["europe-central2-a"]
   node_pools = [
     {
       name         = "default-pool"

@@ -13,7 +13,7 @@ output "gke_ca_certificate" {
   description = "The kubernetes CA certificate"
 }
 output "gke_location" {
-  value       = google_container_cluster.gke.location 
+  value       = google_container_cluster.gke.location
   description = "Location of the GKE cluster. Region if cluster is regional, zone if zonal"
 }
 output "project_id" {
