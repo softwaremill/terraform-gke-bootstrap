@@ -102,13 +102,21 @@ variable "gcr_location" {
   description = "Location of the GCR bucket."
 }
 variable "enable_confidential_nodes" {
-  type = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Wheder enable confidential nodes."
 }
 variable "default_pool_machine_type" {
-  type = string
-  default = "e2-small"
+  type        = string
+  default     = "e2-small"
   description = "In some cases the GKE wan't be created unless the default pool uses specific machine type (for example confidential nodes) so we have to set the type even if the default pool is removed."
-  
+}
+# TODO - make scopes configurabe per pool
+variable "nodes_oauth_scopes" {
+  type = list(string)
+  default = [
+    "https://www.googleapis.com/auth/cloud-platform",
+    "https://www.googleapis.com/auth/logging.write",
+    "https://www.googleapis.com/auth/monitoring"
+  ]
 }
