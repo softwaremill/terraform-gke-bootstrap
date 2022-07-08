@@ -79,19 +79,6 @@ resource "google_container_cluster" "gke" {
   confidential_nodes {
     enabled = var.enable_confidential_nodes
   }
-  workload_identity_config {
-    workload_pool = "${local.project_id}.svc.id.goog"
-  }
-  ip_allocation_policy {
-    cluster_secondary_range_name = local.pods_network_name
-    services_secondary_range_name = local.services_network_name
-  }
-  private_cluster_config {
-    enable_private_nodes = true
-    enable_private_endpoint = false
-    # master_ipv4_cidr_block must be set if enable_private_nodes == true
-    master_ipv4_cidr_block = var.master_ipv4_cidr_block
-  }
   lifecycle {
     ignore_changes = [initial_node_count, node_config]
   }
@@ -112,6 +99,7 @@ resource "google_container_node_pool" "pools" {
       max_node_count = lookup(autoscaling.value, "max_count", 100)
     }
   }
+
   node_config {
     image_type       = lookup(each.value, "image_type", "COS_CONTAINERD")
     machine_type     = lookup(each.value, "machine_type", "e2-medium")
@@ -119,13 +107,11 @@ resource "google_container_node_pool" "pools" {
     local_ssd_count  = lookup(each.value, "local_ssd_count", 0)
     disk_size_gb     = lookup(each.value, "disk_size_gb", 100)
     disk_type        = lookup(each.value, "disk_type", "pd-standard")
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform",
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring"
-    ]
+    labels = merge(
+      var.node_pools_labels["all"],
+      var.node_pools_labels[each.value["name"]],
+    )
   }
-
   lifecycle {
     ignore_changes        = [initial_node_count]
     create_before_destroy = true
