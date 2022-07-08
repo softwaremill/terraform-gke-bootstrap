@@ -107,10 +107,7 @@ resource "google_container_node_pool" "pools" {
     local_ssd_count  = lookup(each.value, "local_ssd_count", 0)
     disk_size_gb     = lookup(each.value, "disk_size_gb", 100)
     disk_type        = lookup(each.value, "disk_type", "pd-standard")
-    labels = merge(
-      var.node_pools_labels["all"],
-      var.node_pools_labels[each.value["name"]],
-    )
+    labels           = lookup(var.node_pools_labels, each.value["name"], {})
   }
   lifecycle {
     ignore_changes        = [initial_node_count]
