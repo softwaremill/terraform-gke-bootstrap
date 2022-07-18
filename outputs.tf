@@ -34,8 +34,10 @@ output "vpc_id" {
   value       = module.network.network_id
   description = "VPC (network) ID"
 }
-
 output "gke_zones" {
   value       = google_container_cluster.gke.node_locations
   description = "List of zones where the cluster lives"
+}
+output "nat_ip" {
+  value = google_compute_address.cloud_nat_address.address
 }
