@@ -39,5 +39,5 @@ output "gke_zones" {
   description = "List of zones where the cluster lives"
 }
 output "nat_ip" {
-  value = google_compute_address.cloud_nat_address.address
+  value = google_compute_address.cloud_nat_address.*.address
 }
