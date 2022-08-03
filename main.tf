@@ -108,6 +108,7 @@ resource "google_container_node_pool" "pools" {
     disk_size_gb     = lookup(each.value, "disk_size_gb", 100)
     disk_type        = lookup(each.value, "disk_type", "pd-standard")
     labels           = lookup(var.node_pools_labels, each.value["name"], {})
+    oauth_scopes     = var.nodes_oauth_scopes
   }
   lifecycle {
     ignore_changes        = [initial_node_count]
