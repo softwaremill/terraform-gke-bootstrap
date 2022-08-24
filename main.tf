@@ -103,7 +103,7 @@ resource "google_container_node_pool" "pools" {
   node_config {
     image_type       = lookup(each.value, "image_type", "COS_CONTAINERD")
     machine_type     = lookup(each.value, "machine_type", "e2-medium")
-    min_cpu_platform = lookup(var.node_pools[0], "min_cpu_platform", "")
+    min_cpu_platform = lookup(each.value, "min_cpu_platform", "")
     local_ssd_count  = lookup(each.value, "local_ssd_count", 0)
     disk_size_gb     = lookup(each.value, "disk_size_gb", 100)
     disk_type        = lookup(each.value, "disk_type", "pd-standard")
