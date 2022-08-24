@@ -1,14 +1,15 @@
 module "gke" {
-  source           = "../../"
+  source           = "../../../"
   create_project   = true
-  billing_account  = "017161-E22F28-B0ACBB"
-  org_id           = "204964337255"
+  billing_account  = "<BILLING_ACCOUNT>" // replace with your billing account
+  org_id           = "<ORG_ID>"          // replace with your org id
   k8s_network_base = "10.100.0.0/16"
   platform_name    = "test-gke"
   region           = "europe-central2"
   subnet_network   = "10.1.0.0/20"
   regional         = false
   zones            = ["europe-central2-a"]
+  enable_private_nodes = false
   node_pools = [
     {
       name         = "default-pool"
