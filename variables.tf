@@ -61,7 +61,7 @@ variable "node_pools" {
       name = "default-node-pool"
     },
   ]
-  description = "List of node pools. To the details refer to https://github.com/terraform-google-modules/terraform-google-kubernetes-engine#node_pools-variable."
+  description = "List of node pools. For parameter details refer to node_pool variable table below"
 }
 
 variable "node_pools_labels" {
@@ -115,19 +115,28 @@ variable "gcr_location" {
 variable "enable_confidential_nodes" {
   type        = bool
   default     = false
-  description = "Wheder enable confidential nodes."
+  description = "Whether to enable confidential nodes."
 }
 variable "default_pool_machine_type" {
   type        = string
   default     = "e2-small"
-  description = "In some cases the GKE wan't be created unless the default pool uses specific machine type (for example confidential nodes) so we have to set the type even if the default pool is removed."
+  description = "In some cases the GKE won't be created unless the default pool uses specific machine type (for example confidential nodes) so we have to set the type even if the default pool is removed."
 }
-# TODO - make scopes configurabe per pool
-variable "nodes_oauth_scopes" {
+
+variable "additional_node_pool_oauth_scopes" {
+  type = map(list(string))
+  default = {
+    default-node-pool = []
+  }
+  description = "Node pool oauth scopes added to specified node pool in addition to default_node_pool_oauth_scopes. It's referenced by node_pool `name`"
+}
+
+variable "default_node_pools_oauth_scopes" {
   type = list(string)
   default = [
     "https://www.googleapis.com/auth/cloud-platform",
     "https://www.googleapis.com/auth/logging.write",
     "https://www.googleapis.com/auth/monitoring"
   ]
+  description = "Default node pool oauth scopes added to all node pools"
 }

@@ -108,34 +108,13 @@ resource "google_container_node_pool" "pools" {
     disk_size_gb     = lookup(each.value, "disk_size_gb", 100)
     disk_type        = lookup(each.value, "disk_type", "pd-standard")
     labels           = lookup(var.node_pools_labels, each.value["name"], {})
-    oauth_scopes     = var.nodes_oauth_scopes
+    oauth_scopes     = lookup(local.node_pool_oauth_scopes, each.value["name"], [])
   }
   lifecycle {
     ignore_changes        = [initial_node_count]
     create_before_destroy = true
   }
 }
-
-# module "kubernetes_engine" {
-#   source                     = "registry.terraform.io/terraform-google-modules/kubernetes-engine/google//modules/private-cluster-update-variant"
-#   version                    = "20.0.0"
-#   ip_range_pods              = local.pods_network_name
-#   ip_range_services          = local.services_network_name
-#   name                       = var.platform_name
-#   network                    = module.network.network_name
-#   project_id                 = local.project_id
-#   subnetwork                 = local.subnet_name
-#   release_channel            = var.release_channel
-#   regional                   = var.regional
-#   zones                      = var.zones
-#   region                     = var.region
-#   node_pools                 = var.node_pools
-#   enable_private_endpoint    = var.enable_private_endpoint
-#   enable_private_nodes       = var.enable_private_nodes
-#   master_ipv4_cidr_block     = var.master_ipv4_cidr_block
-#   depends_on                 = [module.project, module.project_services]
-#   master_authorized_networks = var.master_authorized_networks
-# }
 
 resource "google_container_registry" "registry" {
   project  = local.project_id
