@@ -1,25 +1,26 @@
 output "gke_cluster_name" {
-  value       = module.kubernetes_engine.name
+  value       = google_container_cluster.gke.name
   description = "Cluster name"
 }
+
 output "gke_cluster_id" {
-  value       = module.kubernetes_engine.cluster_id
-  description = "Cluster id"
+  value       = google_container_cluster.gke.id
+  description = "Cluster name"
 }
 
 output "gke_endpoint" {
-  value       = module.kubernetes_engine.endpoint
+  value       = google_container_cluster.gke.endpoint
   sensitive   = true
   description = "The kubernetes endpoint"
 }
 output "gke_ca_certificate" {
-  value       = module.kubernetes_engine.ca_certificate
+  value       = google_container_cluster.gke.master_auth.0.cluster_ca_certificate
   sensitive   = true
   description = "The kubernetes CA certificate"
 }
 output "gke_location" {
-  value       = module.kubernetes_engine.location
-  description = "Location of the cluster"
+  value       = google_container_cluster.gke.location
+  description = "Location of the GKE cluster. Region if cluster is regional, zone if zonal"
 }
 output "project_id" {
   value       = local.project_id
@@ -33,11 +34,10 @@ output "vpc_id" {
   value       = module.network.network_id
   description = "VPC (network) ID"
 }
-output "gke_locaton" {
-  value       = module.kubernetes_engine.location
-  description = "Location of the GKE cluster. Region if cluster is regional, zone if zonal"
-}
 output "gke_zones" {
-  value       = module.kubernetes_engine.zones
+  value       = google_container_cluster.gke.node_locations
   description = "List of zones where the cluster lives"
+}
+output "nat_ip" {
+  value = google_compute_address.cloud_nat_address.*.address
 }
