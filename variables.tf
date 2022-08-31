@@ -107,6 +107,11 @@ variable "activate_apis" {
   ]
   description = "List of Google APIs activated in new or existing project."
 }
+variable "disable_services_on_destroy" {
+  description = "Whether project services will be disabled when the resources are destroyed."
+  default     = true
+  type        = bool
+}
 variable "gcr_location" {
   type        = string
   default     = "EU"
