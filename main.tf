@@ -10,11 +10,12 @@ module "project" {
 }
 
 module "project_services" {
-  source        = "registry.terraform.io/terraform-google-modules/project-factory/google//modules/project_services"
-  version       = "13.0.0"
-  project_id    = var.project_id
-  activate_apis = var.activate_apis
-  count         = var.create_project ? 0 : 1
+  source                      = "registry.terraform.io/terraform-google-modules/project-factory/google//modules/project_services"
+  version                     = "13.0.0"
+  project_id                  = var.project_id
+  activate_apis               = var.activate_apis
+  disable_services_on_destroy = var.disable_services_on_destroy
+  count                       = var.create_project ? 0 : 1
 }
 
 module "network" {
@@ -42,6 +43,9 @@ module "network" {
       }
     ]
   }
+  depends_on = [
+    module.project_services.project_id
+  ]
 }
 
 resource "google_compute_address" "cloud_nat_address" {
@@ -49,6 +53,9 @@ resource "google_compute_address" "cloud_nat_address" {
   project = local.project_id
   region  = var.region
   count   = var.enable_private_nodes ? 1 : 0
+  depends_on = [
+    module.project_services.project_id
+  ]
 }
 
 module "cloud_nat" {
@@ -82,10 +89,13 @@ resource "google_container_cluster" "gke" {
   lifecycle {
     ignore_changes = [initial_node_count, node_config]
   }
+  depends_on = [
+    module.network.subnets
+  ]
 }
 
 resource "google_container_node_pool" "pools" {
-
+  provider       = google-beta
   for_each       = local.node_pools
   location       = local.location
   project        = local.project_id
@@ -100,6 +110,13 @@ resource "google_container_node_pool" "pools" {
     }
   }
 
+  dynamic "placement_policy" {
+    for_each = lookup(each.value, "compact_placement_policy", false) ? [each.value] : []
+    content {
+      type = "COMPACT"
+    }
+  }
+
   node_config {
     image_type       = lookup(each.value, "image_type", "COS_CONTAINERD")
     machine_type     = lookup(each.value, "machine_type", "e2-medium")
@@ -107,6 +124,8 @@ resource "google_container_node_pool" "pools" {
     local_ssd_count  = lookup(each.value, "local_ssd_count", 0)
     disk_size_gb     = lookup(each.value, "disk_size_gb", 100)
     disk_type        = lookup(each.value, "disk_type", "pd-standard")
+    preemptible      = lookup(each.value, "preemptible", false)
+    spot             = lookup(each.value, "spot", false)
     labels           = lookup(var.node_pools_labels, each.value["name"], {})
     oauth_scopes     = lookup(local.node_pool_oauth_scopes, each.value["name"], [])
   }

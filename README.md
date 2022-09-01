@@ -40,7 +40,8 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 4.33.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.34.0 |
+| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | 4.34.0 |
 
 ## Modules
 
@@ -55,9 +56,9 @@ No requirements.
 
 | Name | Type |
 |------|------|
+| [google-beta_google_container_node_pool.pools](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_container_node_pool) | resource |
 | [google_compute_address.cloud_nat_address](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_address) | resource |
 | [google_container_cluster.gke](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster) | resource |
-| [google_container_node_pool.pools](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool) | resource |
 | [google_container_registry.registry](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_registry) | resource |
 
 ## Inputs
@@ -70,6 +71,7 @@ No requirements.
 | <a name="input_create_project"></a> [create\_project](#input\_create\_project) | Defines if create the project. All resources are created this project. If `false` - the project\_id is required. | `bool` | `false` | no |
 | <a name="input_default_node_pools_oauth_scopes"></a> [default\_node\_pools\_oauth\_scopes](#input\_default\_node\_pools\_oauth\_scopes) | Default node pool oauth scopes added to all node pools | `list(string)` | <pre>[<br>  "https://www.googleapis.com/auth/cloud-platform",<br>  "https://www.googleapis.com/auth/logging.write",<br>  "https://www.googleapis.com/auth/monitoring"<br>]</pre> | no |
 | <a name="input_default_pool_machine_type"></a> [default\_pool\_machine\_type](#input\_default\_pool\_machine\_type) | In some cases the GKE won't be created unless the default pool uses specific machine type (for example confidential nodes) so we have to set the type even if the default pool is removed. | `string` | `"e2-small"` | no |
+| <a name="input_disable_services_on_destroy"></a> [disable\_services\_on\_destroy](#input\_disable\_services\_on\_destroy) | Whether project services will be disabled when the resources are destroyed. | `bool` | `true` | no |
 | <a name="input_enable_confidential_nodes"></a> [enable\_confidential\_nodes](#input\_enable\_confidential\_nodes) | Whether to enable confidential nodes. | `bool` | `false` | no |
 | <a name="input_enable_private_endpoint"></a> [enable\_private\_endpoint](#input\_enable\_private\_endpoint) | Defines if create private endpoint. It disables the public endpoint so the cluster is accessible only from VPC. | `bool` | `false` | no |
 | <a name="input_enable_private_nodes"></a> [enable\_private\_nodes](#input\_enable\_private\_nodes) | Defines if use private nodes. Implies creation of cloud NAT service so nodes and pods can access public internet. | `bool` | `true` | no |
@@ -111,7 +113,7 @@ The node_pools variable takes the following parameters:
 | --- | --- | --- | --- |
 | <a name="autoscaling"></a> [autoscaling](#autoscaling) | Configuration required by cluster autoscaler to adjust the size of the node pool to the current cluster usage | `true` | Optional |
 | <a name="node_locations"></a> [node\_locations](#node\_locations) | The list of zones in which the cluster's nodes are located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. Defaults to cluster level node locations if nothing is specified | `""` | Optional |
-| <a name="node_count"></a> [node\_count](#node\_count) | The number of nodes in the nodepool when autoscaling is false. Otherwise defaults to 1. Only valid for non-autoscaling clusters | `` | Required |
+| <a name="node_count"></a> [node\_count](#node\_count) | The number of nodes in the nodepool when autoscaling is false. Otherwise defaults to 1. Only valid for non-autoscaling clusters | `1` | Required |
 | <a name="min_count"></a> [min\_count](#min\_count) | Minimum number of nodes in the NodePool. Must be >=0 and <= max_count. Should be used when autoscaling is true | `1` | Optional |
 | <a name="max_count"></a> [max\_count](#max\_count) | Maximum number of nodes in the NodePool. Must be >= min_count | `100` | Optional |
 | <a name="image_type"></a> [image\_type](#image\_type) | The image type to use for this node. Note that changing the image type will delete and recreate all nodes in the node pool | `COS_CONTAINERD` | Optional |
@@ -119,4 +121,6 @@ The node_pools variable takes the following parameters:
 | <a name="min_cpu_platform"></a> [min\_cpu\_platform](#min\_cpu\_platform) | Minimum CPU platform to be used by the nodes in the pool. The nodes may be scheduled on the specified or newer CPU platform. | `""` | Optional |
 | <a name="local_ssd_count"></a> [local\_ssd\_count](#local\_ssd\_count) | The amount of local SSD disks that will be attached to each cluster node and may be used as a `hostpath` volume or a `local` PersistentVolume.  | `0` | Optional |
 | <a name="disk_size_gb"></a> [disk\_size\_gb](#disk\_size\_gb) | Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB | `100` | Optional |
-| <a name="disk_type"></a> [disk\_type](#disk\_type) | Type of the disk attached to each node (e.g. 'pd-standard' or 'pd-ssd') | `pd-standard` | Optional |
+| <a name="preemptible"></a> [preemptible](#preemptible) | A boolean that represents whether or not the underlying node VMs are preemptible. See the [official documentation](https://cloud.google.com/container-engine/docs/preemptible-vm)</a> for more information.) | `false` | Optional |
+| <a name="spot"></a> [spot](#spot) | A boolean that represents whether the underlying node VMs are spot. See the [official documentation](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms) for more information. | `false` | Optional |
+| <a name="compact_placement_policy"></a> [compact\_placement\_policy](#compact\_placement\_policy) | Compact placement policy enabled places node pool's nodes in a closer physical proximity in order to reduce network latency between nodes. | `false` | Optional |
