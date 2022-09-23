@@ -69,6 +69,9 @@ module "cloud_nat" {
   name          = local.cloud_nat_name
   nat_ips       = [google_compute_address.cloud_nat_address.0.self_link]
   count         = var.enable_private_nodes ? 1 : 0
+  depends_on = [
+    module.project_services.project_id
+  ]
 }
 
 resource "google_container_cluster" "gke" {
