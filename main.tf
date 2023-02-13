@@ -131,6 +131,23 @@ resource "google_container_node_pool" "pools" {
     spot             = lookup(each.value, "spot", false)
     labels           = lookup(var.node_pools_labels, each.value["name"], {})
     oauth_scopes     = lookup(local.node_pool_oauth_scopes, each.value["name"], [])
+
+    dynamic "guest_accelerator" {
+      for_each = lookup(each.value, "guest_accelerator", null) != null ? [1] : []
+      content {
+        type               = lookup(each.value["guest_accelerator"], "type", "")
+        count              = lookup(each.value["guest_accelerator"], "count", 0)
+        gpu_partition_size = lookup(each.value["guest_accelerator"], "gpu_partition_size", null)
+
+        dynamic "gpu_sharing_config" {
+          for_each = lookup(each.value["guest_accelerator"], "gpu_sharing_config", null) != null ? [1] : []
+          content {
+            gpu_sharing_strategy       = lookup(gpu_sharing_config.value, "gpu_sharing_strategy", "TIME_SHARING")
+            max_shared_clients_per_gpu = lookup(gpu_sharing_config.value, "max_shared_clients_per_gpu", 2)
+          }
+        }
+      }
+    }
   }
   lifecycle {
     ignore_changes        = [initial_node_count]
