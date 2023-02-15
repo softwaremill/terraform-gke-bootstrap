@@ -40,8 +40,8 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 4.37.0 |
-| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | 4.37.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.52.0 |
+| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | 4.52.0 |
 
 ## Modules
 
@@ -69,7 +69,7 @@ No requirements.
 | <a name="input_additional_node_pool_oauth_scopes"></a> [additional\_node\_pool\_oauth\_scopes](#input\_additional\_node\_pool\_oauth\_scopes) | Node pool oauth scopes added to specified node pool in addition to default\_node\_pool\_oauth\_scopes. It's referenced by node\_pool `name` | `map(list(string))` | <pre>{<br>  "default-node-pool": []<br>}</pre> | no |
 | <a name="input_billing_account"></a> [billing\_account](#input\_billing\_account) | The billing account to witch the new project should be connected. Required if `create_project` set to `true`. | `string` | `""` | no |
 | <a name="input_create_project"></a> [create\_project](#input\_create\_project) | Defines if create the project. All resources are created this project. If `false` - the project\_id is required. | `bool` | `false` | no |
-| <a name="input_default_node_pools_oauth_scopes"></a> [default\_node\_pools\_oauth\_scopes](#input\_default\_node\_pools\_oauth\_scopes) | Default node pool oauth scopes added to all node pools | `list(string)` | <pre>[<br>  "https://www.googleapis.com/auth/cloud-platform",<br>  "https://www.googleapis.com/auth/logging.write",<br>  "https://www.googleapis.com/auth/monitoring"<br>]</pre> | no |
+| <a name="input_default_node_pools_oauth_scopes"></a> [default\_node\_pools\_oauth\_scopes](#input\_default\_node\_pools\_oauth\_scopes) | Default node pool oauth scopes added to all node pools | `list(string)` | <pre>[<br>  "https://www.googleapis.com/auth/devstorage.read_only",<br>  "https://www.googleapis.com/auth/cloud-platform",<br>  "https://www.googleapis.com/auth/logging.write",<br>  "https://www.googleapis.com/auth/monitoring",<br>  "https://www.googleapis.com/auth/compute"<br>]</pre> | no |
 | <a name="input_default_pool_machine_type"></a> [default\_pool\_machine\_type](#input\_default\_pool\_machine\_type) | In some cases the GKE won't be created unless the default pool uses specific machine type (for example confidential nodes) so we have to set the type even if the default pool is removed. | `string` | `"e2-small"` | no |
 | <a name="input_disable_services_on_destroy"></a> [disable\_services\_on\_destroy](#input\_disable\_services\_on\_destroy) | Whether project services will be disabled when the resources are destroyed. | `bool` | `true` | no |
 | <a name="input_enable_confidential_nodes"></a> [enable\_confidential\_nodes](#input\_enable\_confidential\_nodes) | Whether to enable confidential nodes. | `bool` | `false` | no |
@@ -79,7 +79,7 @@ No requirements.
 | <a name="input_k8s_network_base"></a> [k8s\_network\_base](#input\_k8s\_network\_base) | The IP CIDR base for pods and services secondary networks. Must not overlap with `subnet_network`. Must be a `/16` network. | `string` | n/a | yes |
 | <a name="input_master_authorized_networks"></a> [master\_authorized\_networks](#input\_master\_authorized\_networks) | Allows accessing masters only from defined networks. If `enable_private_endpoint` is `true` it must not be any public CIDR block. | `list(map(string))` | <pre>[<br>  {<br>    "cidr_block": "0.0.0.0/0",<br>    "display_name": "ALL"<br>  }<br>]</pre> | no |
 | <a name="input_master_ipv4_cidr_block"></a> [master\_ipv4\_cidr\_block](#input\_master\_ipv4\_cidr\_block) | The /28 CIDR block for masters when using private cluster. | `string` | `"172.16.0.0/28"` | no |
-| <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | List of node pools. For parameter details refer to node\_pool variable table below | `list(map(string))` | <pre>[<br>  {<br>    "name": "default-node-pool"<br>  }<br>]</pre> | no |
+| <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | List of node pools. For parameter details refer to node\_pool variable table below | `list(any)` | <pre>[<br>  {<br>    "name": "default-node-pool"<br>  }<br>]</pre> | no |
 | <a name="input_node_pools_labels"></a> [node\_pools\_labels](#input\_node\_pools\_labels) | List of node pools labels. https://registry.terraform.io/modules/terraform-google-modules/kubernetes-engine/google/21.1.0/submodules/private-cluster-update-variant?tab=inputs#:~:text=default%2Dnode%2Dpool%22%20%7D%20%5D-,node_pools_labels,-map(map(string | `map(map(string))` | <pre>{<br>  "default-node-pool": {<br>    "node.pool/name": "default-node-pool"<br>  }<br>}</pre> | no |
 | <a name="input_org_id"></a> [org\_id](#input\_org\_id) | GCP organization id. Required if `create_project` is `true`. | `string` | `""` | no |
 | <a name="input_platform_name"></a> [platform\_name](#input\_platform\_name) | The name of the platform. Many resource names are based on this (VPC, subnet, GKE cluster etc). | `string` | n/a | yes |

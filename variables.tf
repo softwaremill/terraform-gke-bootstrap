@@ -55,7 +55,7 @@ variable "zones" {
   description = "List of zones for `zonal` cluster. Required if `regional` set to `false`."
 }
 variable "node_pools" {
-  type = list(map(string))
+  type = list(any)
   default = [
     {
       name = "default-node-pool"
@@ -139,9 +139,11 @@ variable "additional_node_pool_oauth_scopes" {
 variable "default_node_pools_oauth_scopes" {
   type = list(string)
   default = [
+    "https://www.googleapis.com/auth/devstorage.read_only",
     "https://www.googleapis.com/auth/cloud-platform",
     "https://www.googleapis.com/auth/logging.write",
-    "https://www.googleapis.com/auth/monitoring"
+    "https://www.googleapis.com/auth/monitoring",
+    "https://www.googleapis.com/auth/compute"
   ]
   description = "Default node pool oauth scopes added to all node pools"
 }
