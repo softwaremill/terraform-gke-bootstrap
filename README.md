@@ -2,6 +2,15 @@
 This module creates the GKE cluster with all dependencies: project, network (VPC), subnet etc.
 It can also use existing project - in such case set the `create_project` to `false` and provide the existing `project_id`.
 
+# Prerequisite
+
+- Before you create GCP project make sure you have right permission to attach billing accounts to created project. 
+That means have at least one of IAM roles attached:
+  - roles/billing.creator
+  - roles/billing.admin
+  - roles/billing.user
+  - roles/billing.projectManager
+
 ## Usage
 
 The simplest way to use this module:
@@ -40,8 +49,8 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 4.53.1 |
-| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | 4.53.1 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.62.1 |
+| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | 4.62.1 |
 
 ## Modules
 
@@ -67,7 +76,7 @@ No requirements.
 |------|-------------|------|---------|:--------:|
 | <a name="input_activate_apis"></a> [activate\_apis](#input\_activate\_apis) | List of Google APIs activated in new or existing project. | `list(string)` | <pre>[<br>  "compute.googleapis.com",<br>  "container.googleapis.com"<br>]</pre> | no |
 | <a name="input_additional_node_pool_oauth_scopes"></a> [additional\_node\_pool\_oauth\_scopes](#input\_additional\_node\_pool\_oauth\_scopes) | Node pool oauth scopes added to specified node pool in addition to default\_node\_pool\_oauth\_scopes. It's referenced by node\_pool `name` | `map(list(string))` | <pre>{<br>  "default-node-pool": []<br>}</pre> | no |
-| <a name="input_billing_account"></a> [billing\_account](#input\_billing\_account) | The billing account to witch the new project should be connected. Required if `create_project` set to `true`. | `string` | `""` | no |
+| <a name="input_billing_account"></a> [billing\_account](#input\_billing\_account) | YOU NEED TO HAVE PERMISSION TO BILLING ACCOUNT, The billing account to witch the new project should be connected. Required if `create_project` set to `true`. | `string` | `""` | no |
 | <a name="input_create_project"></a> [create\_project](#input\_create\_project) | Defines if create the project. All resources are created this project. If `false` - the project\_id is required. | `bool` | `false` | no |
 | <a name="input_default_node_pools_oauth_scopes"></a> [default\_node\_pools\_oauth\_scopes](#input\_default\_node\_pools\_oauth\_scopes) | Default node pool oauth scopes added to all node pools | `list(string)` | <pre>[<br>  "https://www.googleapis.com/auth/devstorage.read_only",<br>  "https://www.googleapis.com/auth/cloud-platform",<br>  "https://www.googleapis.com/auth/logging.write",<br>  "https://www.googleapis.com/auth/monitoring",<br>  "https://www.googleapis.com/auth/compute"<br>]</pre> | no |
 | <a name="input_default_pool_machine_type"></a> [default\_pool\_machine\_type](#input\_default\_pool\_machine\_type) | In some cases the GKE won't be created unless the default pool uses specific machine type (for example confidential nodes) so we have to set the type even if the default pool is removed. | `string` | `"e2-small"` | no |
