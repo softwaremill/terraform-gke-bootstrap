@@ -22,7 +22,7 @@ variable "project_id" {
   default     = ""
   description = "Existing project id. Required if `create_project` set to `false`"
   validation {
-    condition     = can(regex("^[a-z]{1}[0-9a-z-]{5,29}$", var.project_id))
+    condition     = (var.project_id == "" || can(regex("^[a-z]{1}[0-9a-z-]{5,29}$", var.project_id)))
     error_message = "The project id must be 6 to 30 characters in length, can only contain lowercase letters, numbers, and hyphens"
   }
 }
@@ -31,7 +31,7 @@ variable "project_name" {
   default     = ""
   description = "The name of the created project. Defaults to `platform_name` if not set."
   validation {
-    condition     = length(var.project_name) < 25 && length(var.project_name) > 4
+    condition     = (var.project_name == "" || length(var.project_name) < 25 && length(var.project_name) > 4)
     error_message = "The project name should contain only 25 characters. Last 5 characters up to 30 total are generated"
   }
 }
@@ -162,4 +162,10 @@ variable "default_node_pools_oauth_scopes" {
     "https://www.googleapis.com/auth/compute"
   ]
   description = "Default node pool oauth scopes added to all node pools"
+}
+
+variable "enable_autopilot" {
+  type        = bool
+  default     = false
+  description = "Whether to enable Autopilot feature. "
 }

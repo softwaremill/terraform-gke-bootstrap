@@ -81,7 +81,8 @@ resource "google_container_cluster" "gke" {
   node_locations           = local.node_locations
   network                  = module.network.network_self_link
   subnetwork               = local.subnet_name
-  remove_default_node_pool = true
+  remove_default_node_pool = !var.enable_autopilot ? true : null
+  enable_autopilot         = var.enable_autopilot
   initial_node_count       = 1
   node_config {
     machine_type = var.default_pool_machine_type
@@ -95,6 +96,10 @@ resource "google_container_cluster" "gke" {
   depends_on = [
     module.network.subnets
   ]
+  ip_allocation_policy {
+    cluster_secondary_range_name  = local.pods_network_name
+    services_secondary_range_name = local.services_network_name
+  }
 }
 
 resource "google_container_node_pool" "pools" {
@@ -159,4 +164,3 @@ resource "google_container_registry" "registry" {
   project  = local.project_id
   location = var.gcr_location
 }
-
