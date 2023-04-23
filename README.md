@@ -115,6 +115,7 @@ No requirements.
 | <a name="output_project_id"></a> [project\_id](#output\_project\_id) | ID of the project containing the cluster |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | VPC (network) ID |
 | <a name="output_vpc_name"></a> [vpc\_name](#output\_vpc\_name) | Name of the created VPC (network) |
+| <a name="output_vpc_self_link"></a> [vpc\_self\_link](#output\_vpc\_self\_link) | VPC (network) self link |
 <!-- END_TF_DOCS -->
 
 ## node_pools variable
