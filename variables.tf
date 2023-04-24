@@ -169,3 +169,8 @@ variable "enable_autopilot" {
   default     = false
   description = "Whether to enable Autopilot feature. "
 }
+variable "subnet_private_access" {
+  type        = bool
+  default     = true
+  description = "Whether to enable google private IP access for the subnet"
+}

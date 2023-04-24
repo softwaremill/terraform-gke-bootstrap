@@ -26,9 +26,10 @@ module "network" {
   auto_create_subnetworks = false
   subnets = [
     {
-      subnet_name   = local.subnet_name
-      subnet_ip     = var.subnet_network
-      subnet_region = var.region
+      subnet_name           = local.subnet_name
+      subnet_ip             = var.subnet_network
+      subnet_region         = var.region
+      subnet_private_access = var.subnet_private_access
     }
   ]
   secondary_ranges = {
