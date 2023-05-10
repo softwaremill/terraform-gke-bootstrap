@@ -43,5 +43,10 @@ output "gke_zones" {
   description = "List of zones where the cluster lives"
 }
 output "nat_ip" {
-  value = google_compute_address.cloud_nat_address.*.address
+  value       = google_compute_address.cloud_nat_address.*.address
+  description = "The IP address allocated for NAT"
+}
+output "subnetwork_name" {
+  value       = module.network.subnets_names.0
+  description = "Name of the subnetwork"
 }
