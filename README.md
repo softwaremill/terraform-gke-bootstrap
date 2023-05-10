@@ -52,7 +52,6 @@ No requirements.
 | <a name="provider_google"></a> [google](#provider\_google) | 4.76.0 |
 | <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | 4.76.0 |
 
-
 ## Modules
 
 | Name | Source | Version |
@@ -112,8 +111,9 @@ No requirements.
 | <a name="output_gke_endpoint"></a> [gke\_endpoint](#output\_gke\_endpoint) | The kubernetes endpoint |
 | <a name="output_gke_location"></a> [gke\_location](#output\_gke\_location) | Location of the GKE cluster. Region if cluster is regional, zone if zonal |
 | <a name="output_gke_zones"></a> [gke\_zones](#output\_gke\_zones) | List of zones where the cluster lives |
-| <a name="output_nat_ip"></a> [nat\_ip](#output\_nat\_ip) | n/a |
+| <a name="output_nat_ip"></a> [nat\_ip](#output\_nat\_ip) | The IP address allocated for NAT |
 | <a name="output_project_id"></a> [project\_id](#output\_project\_id) | ID of the project containing the cluster |
+| <a name="output_subnetwork_name"></a> [subnetwork\_name](#output\_subnetwork\_name) | Name of the subnetwork |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | VPC (network) ID |
 | <a name="output_vpc_name"></a> [vpc\_name](#output\_vpc\_name) | Name of the created VPC (network) |
 | <a name="output_vpc_self_link"></a> [vpc\_self\_link](#output\_vpc\_self\_link) | VPC (network) self link |
