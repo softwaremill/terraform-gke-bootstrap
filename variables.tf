@@ -60,6 +60,19 @@ variable "k8s_network_base" {
   type        = string
   description = "The IP CIDR base for pods and services secondary networks. Must not overlap with `subnet_network`. Must be a `/16` network."
 }
+
+variable "gke_release_channel" {
+  type        = string
+  description = "control over automatic upgrades of your GKE clusters"
+  default     = "REGULAR"
+}
+
+variable "gke_min_master_version" {
+  type        = string
+  description = "The minimum version of the master control plane"
+  default     = ""
+}
+
 variable "regional" {
   type        = bool
   default     = true

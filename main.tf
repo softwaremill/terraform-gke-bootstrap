@@ -83,6 +83,12 @@ resource "google_container_cluster" "gke" {
   subnetwork               = local.subnet_name
   remove_default_node_pool = true
   initial_node_count       = 1
+  min_master_version       = var.gke_min_master_version != "" ? var.gke_min_master_version : null
+
+  release_channel {
+    channel = var.gke_release_channel
+  }
+
   node_config {
     machine_type = var.default_pool_machine_type
   }
@@ -107,9 +113,10 @@ resource "google_container_node_pool" "pools" {
   node_count     = lookup(each.value, "autoscaling", true) ? null : lookup(each.value, "node_count", 1)
   version        = lookup(each.value, "version", null)
 
+
   management {
     auto_upgrade = lookup(each.value, "auto_upgrade", true)
-    auto_repair  = lookup(each.value, "auto_upgrade", false)
+    auto_repair  = lookup(each.value, "auto_upgrade", true)
   }
 
   dynamic "autoscaling" {
@@ -138,6 +145,7 @@ resource "google_container_node_pool" "pools" {
     spot             = lookup(each.value, "spot", false)
     labels           = lookup(var.node_pools_labels, each.value["name"], {})
     oauth_scopes     = lookup(local.node_pool_oauth_scopes, each.value["name"], [])
+
 
 
     dynamic "guest_accelerator" {
