@@ -71,7 +71,7 @@ variable "zones" {
   description = "List of zones for `zonal` cluster. Required if `regional` set to `false`."
 }
 variable "node_pools" {
-  type = list(any)
+  type = any
   default = [
     {
       name = "default-node-pool"
