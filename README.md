@@ -25,20 +25,45 @@ module "gke" {
   subnet_network = "10.1.0.0/20"
   regional = false
   zones = ["europe-central2-a"]
-  node_pools = [
-    {
-      name = "default-pool"
+  node_pools = {
+    default-pool = {
       disk_size_gb = 50
       max_count = 3
       preemptible = true
     }
-  ]
+  }
 }
 ```
 
 By default, it creates a "private" GKE cluster, but this can be changed setting `enable_private_nodes` to `false`.
 This module is based on opinionated google modules, but combines several modules into "one module to rule them all".
 It uses the `private-cluster-update-variant` submodule of GKE - the version which can creates private cluster and - in case of node pool changes - creates new pool before deleting the old one, which minimizes the downtime of the live system.
+
+## Node pools variable
+The `node_pools` is a map of objects, where the node pool name is a key. Possible values:
+
+| Name | Description                                                                                                                                                                                                                                                                                                                                                                 | Default |
+|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| image_type | The image type used to create the nodes. The possible values are COS_CONTAINERD, COS, UBUNTU_CONTAINERD, UBUNTU. NOTE : COS AND UBUNTU are deprecated as of GKE 1.24                                                                                                                                                                                                        | COS_CONTAINERD |
+| machine_type | The name of a Google Compute Engine machine type.                                                                                                                                                                                                                                                                                                                           | e2-medium |
+| min_cpu_platform | Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or newer CPU platform. Applicable values are the friendly names of CPU platforms, such as Intel Haswell. See the [official documentation](https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform) for more information.                                  | "" |
+| local_ssd_count | Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. Each local SSD is 375 GB in size. If zero, it means to disable using local SSDs as ephemeral storage.                                                                                                                                                                                          | 0 |
+| disk_size_gb | Size of the disk attached to each node, specified in GB.                                                                                                                                                                                                                                                                                                                    | 100 |
+| disk_type | Type of the disk attached to each node (e.g. 'pd-standard', 'pd-ssd' or 'pd-balanced').                                                                                                                                                                                                                                                                                                                                                                            | pd-standard |
+| preemptible | A boolean that represents whether or not the underlying node VMs are preemptible                                                                                                                                                                                                                                                                                            | false |
+| spot | A boolean that represents whether the underlying node VMs are spot.                                                                                                                                                                                                                                                                                                         | false |
+| labels | The Kubernetes labels (key/value pairs) to be applied to each node. The kubernetes.io/ and k8s.io/ prefixes are reserved by Kubernetes Core components and cannot be specified.                                                                                                                                                                                             | {} |
+| oauth_scopes | The set of Google API scopes to be made available on all of the node VMs under the "default" service account. Use the "https://www.googleapis.com/auth/cloud-platform" scope to grant access to all APIs. It is recommended that you set service_account to a non-default service account and grant IAM roles to that service account for only the resources that it needs. | var.default_node_pools_oauth_scopes |
+| service_account | The service account to be used by the Node VMs. If not specified, the "default" service account is used.                                                                                                                                                                                                                                                                                                                                                                            | null |
+| taint | A list of Kubernetes taints to apply to nodes. Each taint consist of `key`, `value` and the effect, which must be one of NO_SCHEDULE, PREFER_NO_SCHEDULE, and NO_EXECUTE.                                                                                                                                                                                                   | [] | 
+
+
+
+
+## Autopilot support
+This module supports the autopilot GKE cluster. To create the autopilot cluster:
+- set the `enable_autopilot` to `true`
+- set the `node_pools` variable to empty list `[]`
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

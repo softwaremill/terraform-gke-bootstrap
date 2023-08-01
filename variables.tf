@@ -70,15 +70,17 @@ variable "zones" {
   default     = []
   description = "List of zones for `zonal` cluster. Required if `regional` set to `false`."
 }
-variable "node_pools" {
-  type = list(any)
-  default = [
-    {
-      name = "default-node-pool"
-    },
-  ]
-  description = "List of node pools. For parameter details refer to node_pool variable table below"
-}
+#variable "node_pools" {
+#  type = list(any)
+#  default = [
+#    {
+#      name = "default-node-pool"
+#    },
+#  ]
+#  description = "List of node pools. For parameter details refer to node_pool variable table below"
+#}
+
+variable "node_pools" {}
 
 variable "node_pools_labels" {
   type = map(map(string))
@@ -144,31 +146,20 @@ variable "default_pool_machine_type" {
   description = "In some cases the GKE won't be created unless the default pool uses specific machine type (for example confidential nodes) so we have to set the type even if the default pool is removed."
 }
 
-variable "additional_node_pool_oauth_scopes" {
-  type = map(list(string))
-  default = {
-    default-node-pool = []
-  }
-  description = "Node pool oauth scopes added to specified node pool in addition to default_node_pool_oauth_scopes. It's referenced by node_pool `name`"
-}
-
 variable "default_node_pools_oauth_scopes" {
   type = list(string)
   default = [
-    "https://www.googleapis.com/auth/devstorage.read_only",
-    "https://www.googleapis.com/auth/cloud-platform",
-    "https://www.googleapis.com/auth/logging.write",
-    "https://www.googleapis.com/auth/monitoring",
-    "https://www.googleapis.com/auth/compute"
+    "https://www.googleapis.com/auth/cloud-platform"
   ]
   description = "Default node pool oauth scopes added to all node pools"
 }
 
 variable "enable_autopilot" {
   type        = bool
-  default     = false
-  description = "Whether to enable Autopilot feature. "
+  default     = null
+  description = "Whether to enable Autopilot feature"
 }
+
 variable "subnet_private_access" {
   type        = bool
   default     = true
