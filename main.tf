@@ -107,6 +107,11 @@ resource "google_container_node_pool" "pools" {
   node_count     = lookup(each.value, "autoscaling", true) ? null : lookup(each.value, "node_count", 1)
   version        = lookup(each.value, "version", null)
 
+  management {
+    auto_upgrade = lookup(each.value, "auto_upgrade", true)
+    auto_repair  = lookup(each.value, "auto_upgrade", false)
+  }
+
   dynamic "autoscaling" {
     for_each = lookup(each.value, "autoscaling", true) ? [each.value] : []
     content {
