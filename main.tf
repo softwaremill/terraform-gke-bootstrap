@@ -105,6 +105,8 @@ resource "google_container_node_pool" "pools" {
   cluster        = google_container_cluster.gke.name
   node_locations = lookup(each.value, "node_locations", "") != "" ? split(",", each.value["node_locations"]) : null
   node_count     = lookup(each.value, "autoscaling", true) ? null : lookup(each.value, "node_count", 1)
+  version        = lookup(each.value, "version", null)
+
   dynamic "autoscaling" {
     for_each = lookup(each.value, "autoscaling", true) ? [each.value] : []
     content {
@@ -131,6 +133,7 @@ resource "google_container_node_pool" "pools" {
     spot             = lookup(each.value, "spot", false)
     labels           = lookup(var.node_pools_labels, each.value["name"], {})
     oauth_scopes     = lookup(local.node_pool_oauth_scopes, each.value["name"], [])
+
 
     dynamic "guest_accelerator" {
       for_each = lookup(each.value, "guest_accelerator", null) != null ? [1] : []
