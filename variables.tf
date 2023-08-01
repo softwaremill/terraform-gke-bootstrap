@@ -70,26 +70,11 @@ variable "zones" {
   default     = []
   description = "List of zones for `zonal` cluster. Required if `regional` set to `false`."
 }
-#variable "node_pools" {
-#  type = list(any)
-#  default = [
-#    {
-#      name = "default-node-pool"
-#    },
-#  ]
-#  description = "List of node pools. For parameter details refer to node_pool variable table below"
-#}
 
-variable "node_pools" {}
-
-variable "node_pools_labels" {
-  type = map(map(string))
-  default = {
-    "default-node-pool" = {
-      "node.pool/name" = "default-node-pool"
-    },
-  }
-  description = "List of node pools labels. https://registry.terraform.io/modules/terraform-google-modules/kubernetes-engine/google/21.1.0/submodules/private-cluster-update-variant?tab=inputs#:~:text=default%2Dnode%2Dpool%22%20%7D%20%5D-,node_pools_labels,-map(map(string"
+variable "node_pools" {
+  type = object(any)
+  default = {}
+  description = "The object which describes the node pools. The structure is described in the README file."
 }
 
 variable "master_ipv4_cidr_block" {
