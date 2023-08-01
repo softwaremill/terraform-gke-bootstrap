@@ -156,8 +156,11 @@ resource "google_container_node_pool" "pools" {
         gpu_partition_size = lookup(each.value["guest_accelerator"], "gpu_partition_size", null)
 
 
-        gpu_driver_installation_config {
-          gpu_driver_version = lookup(each.value["guest_accelerator"], "gpu_driver_version", "DEFAULT")
+        dynamic "gpu_driver_installation_config" {
+          for_each = lookup(each.value["guest_accelerator"], "gpu_driver_version", null) != null ? [1] : []
+          content {
+            gpu_driver_version = lookup(each.value["guest_accelerator"], "gpu_driver_version", "DEFAULT")
+          }
         }
 
         dynamic "gpu_sharing_config" {
