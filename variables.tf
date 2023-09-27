@@ -72,8 +72,8 @@ variable "zones" {
 }
 
 variable "node_pools" {
-  type = object(any)
-  default = {}
+  type        = map(map(any))
+  default     = {}
   description = "The object which describes the node pools. The structure is described in the README file."
 }
 

@@ -17,11 +17,11 @@ module "gke" {
         "node.pool/name" = "default"
       }
       oauth_scopes = ["https://www.googleapis.com/auth/compute"]
-      spot = true
+      spot         = true
       taint = [
         {
-          key = "test"
-          value = "test"
+          key    = "test"
+          value  = "test"
           effect = "NO_SCHEDULE"
         }
       ]

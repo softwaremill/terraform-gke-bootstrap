@@ -9,12 +9,11 @@ module "gke" {
   regional             = false
   zones                = ["europe-central2-a"]
   enable_private_nodes = false
-  node_pools = [
-    {
-      name         = "default-pool"
+  node_pools = {
+    default-pool = {
       disk_size_gb = 50
       max_count    = 3
       preemptible  = true
     }
-  ]
+  }
 }

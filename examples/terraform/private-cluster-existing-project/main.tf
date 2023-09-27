@@ -8,12 +8,11 @@ module "gke" {
   k8s_network_base = "10.100.0.0/16"
   regional         = false
   zones            = ["europe-central2-a"]
-  node_pools = [
-    {
-      name         = "default-pool"
+  node_pools = {
+    default-pool = {
       disk_size_gb = 50
       max_count    = 3
       preemptible  = true
     }
-  ]
+  }
 }
