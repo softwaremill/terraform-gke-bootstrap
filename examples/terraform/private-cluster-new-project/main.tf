@@ -9,12 +9,22 @@ module "gke" {
   subnet_network   = "10.1.0.0/20"
   regional         = false
   zones            = ["europe-central2-a"]
-  node_pools = [
-    {
-      name         = "default-pool"
+  node_pools = {
+    default-pool = {
       disk_size_gb = 50
       max_count    = 3
-      preemptible  = true
+      labels = {
+        "node.pool/name" = "default"
+      }
+      oauth_scopes = ["https://www.googleapis.com/auth/compute"]
+      spot         = true
+      taint = [
+        {
+          key    = "test"
+          value  = "test"
+          effect = "NO_SCHEDULE"
+        }
+      ]
     }
-  ]
+  }
 }

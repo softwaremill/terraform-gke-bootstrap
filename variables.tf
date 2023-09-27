@@ -22,7 +22,7 @@ variable "project_id" {
   default     = ""
   description = "Existing project id. Required if `create_project` set to `false`"
   validation {
-    condition     = can(regex("^[a-z]{1}[0-9a-z-]{5,29}$", var.project_id))
+    condition     = (var.project_id == "" || can(regex("^[a-z]{1}[0-9a-z-]{5,29}$", var.project_id)))
     error_message = "The project id must be 6 to 30 characters in length, can only contain lowercase letters, numbers, and hyphens"
   }
 }
@@ -31,7 +31,7 @@ variable "project_name" {
   default     = ""
   description = "The name of the created project. Defaults to `platform_name` if not set."
   validation {
-    condition     = length(var.project_name) < 25 && length(var.project_name) > 4
+    condition     = (var.project_name == "" || length(var.project_name) < 25 && length(var.project_name) > 4)
     error_message = "The project name should contain only 25 characters. Last 5 characters up to 30 total are generated"
   }
 }
@@ -70,24 +70,11 @@ variable "zones" {
   default     = []
   description = "List of zones for `zonal` cluster. Required if `regional` set to `false`."
 }
-variable "node_pools" {
-  type = list(any)
-  default = [
-    {
-      name = "default-node-pool"
-    },
-  ]
-  description = "List of node pools. For parameter details refer to node_pool variable table below"
-}
 
-variable "node_pools_labels" {
-  type = map(map(string))
-  default = {
-    "default-node-pool" = {
-      "node.pool/name" = "default-node-pool"
-    },
-  }
-  description = "List of node pools labels. https://registry.terraform.io/modules/terraform-google-modules/kubernetes-engine/google/21.1.0/submodules/private-cluster-update-variant?tab=inputs#:~:text=default%2Dnode%2Dpool%22%20%7D%20%5D-,node_pools_labels,-map(map(string"
+variable "node_pools" {
+  type        = map(map(any))
+  default     = {}
+  description = "The object which describes the node pools. The structure is described in the README file."
 }
 
 variable "master_ipv4_cidr_block" {
@@ -144,22 +131,22 @@ variable "default_pool_machine_type" {
   description = "In some cases the GKE won't be created unless the default pool uses specific machine type (for example confidential nodes) so we have to set the type even if the default pool is removed."
 }
 
-variable "additional_node_pool_oauth_scopes" {
-  type = map(list(string))
-  default = {
-    default-node-pool = []
-  }
-  description = "Node pool oauth scopes added to specified node pool in addition to default_node_pool_oauth_scopes. It's referenced by node_pool `name`"
-}
-
 variable "default_node_pools_oauth_scopes" {
   type = list(string)
   default = [
-    "https://www.googleapis.com/auth/devstorage.read_only",
-    "https://www.googleapis.com/auth/cloud-platform",
-    "https://www.googleapis.com/auth/logging.write",
-    "https://www.googleapis.com/auth/monitoring",
-    "https://www.googleapis.com/auth/compute"
+    "https://www.googleapis.com/auth/cloud-platform"
   ]
   description = "Default node pool oauth scopes added to all node pools"
+}
+
+variable "enable_autopilot" {
+  type        = bool
+  default     = null
+  description = "Whether to enable Autopilot feature"
+}
+
+variable "subnet_private_access" {
+  type        = bool
+  default     = true
+  description = "Whether to enable google private IP access for the subnet"
 }

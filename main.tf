@@ -1,6 +1,6 @@
 module "project" {
   source            = "registry.terraform.io/terraform-google-modules/project-factory/google"
-  version           = "13.0.0"
+  version           = "14.2.1"
   billing_account   = var.billing_account
   name              = var.platform_name
   org_id            = var.org_id
@@ -10,8 +10,8 @@ module "project" {
 }
 
 module "project_services" {
-  source                      = "registry.terraform.io/terraform-google-modules/project-factory/google//modules/project_services"
-  version                     = "13.0.0"
+  source                      = "terraform-google-modules/project-factory/google//modules/project_services"
+  version                     = "14.2.1"
   project_id                  = var.project_id
   activate_apis               = var.activate_apis
   disable_services_on_destroy = var.disable_services_on_destroy
@@ -20,15 +20,16 @@ module "project_services" {
 
 module "network" {
   source                  = "registry.terraform.io/terraform-google-modules/network/google"
-  version                 = "5.0.0"
+  version                 = "7.1.0"
   network_name            = var.platform_name
   project_id              = local.project_id
   auto_create_subnetworks = false
   subnets = [
     {
-      subnet_name   = local.subnet_name
-      subnet_ip     = var.subnet_network
-      subnet_region = var.region
+      subnet_name           = local.subnet_name
+      subnet_ip             = var.subnet_network
+      subnet_region         = var.region
+      subnet_private_access = var.subnet_private_access
     }
   ]
   secondary_ranges = {
@@ -60,7 +61,7 @@ resource "google_compute_address" "cloud_nat_address" {
 
 module "cloud_nat" {
   source        = "registry.terraform.io/terraform-google-modules/cloud-nat/google"
-  version       = "2.2.0"
+  version       = "4.0.0"
   project_id    = local.project_id
   region        = var.region
   network       = module.network.network_name
@@ -81,7 +82,8 @@ resource "google_container_cluster" "gke" {
   node_locations           = local.node_locations
   network                  = module.network.network_self_link
   subnetwork               = local.subnet_name
-  remove_default_node_pool = true
+  remove_default_node_pool = var.enable_autopilot == null ? true : null
+  enable_autopilot         = var.enable_autopilot
   initial_node_count       = 1
   node_config {
     machine_type = var.default_pool_machine_type
@@ -95,11 +97,15 @@ resource "google_container_cluster" "gke" {
   depends_on = [
     module.network.subnets
   ]
+  ip_allocation_policy {
+    cluster_secondary_range_name  = local.pods_network_name
+    services_secondary_range_name = local.services_network_name
+  }
 }
 
 resource "google_container_node_pool" "pools" {
   provider       = google-beta
-  for_each       = local.node_pools
+  for_each       = var.node_pools
   location       = local.location
   project        = local.project_id
   cluster        = google_container_cluster.gke.name
@@ -129,8 +135,10 @@ resource "google_container_node_pool" "pools" {
     disk_type        = lookup(each.value, "disk_type", "pd-standard")
     preemptible      = lookup(each.value, "preemptible", false)
     spot             = lookup(each.value, "spot", false)
-    labels           = lookup(var.node_pools_labels, each.value["name"], {})
-    oauth_scopes     = lookup(local.node_pool_oauth_scopes, each.value["name"], [])
+    labels           = lookup(each.value, "labels", {})
+    oauth_scopes     = lookup(each.value, "oauth_scopes", var.default_node_pools_oauth_scopes)
+    service_account  = lookup(each.value, "service_account", null)
+    taint            = lookup(each.value, "taint", [])
 
     dynamic "guest_accelerator" {
       for_each = lookup(each.value, "guest_accelerator", null) != null ? [1] : []
@@ -159,4 +167,3 @@ resource "google_container_registry" "registry" {
   project  = local.project_id
   location = var.gcr_location
 }
-

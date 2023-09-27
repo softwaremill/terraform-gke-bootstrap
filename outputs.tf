@@ -34,10 +34,19 @@ output "vpc_id" {
   value       = module.network.network_id
   description = "VPC (network) ID"
 }
+output "vpc_self_link" {
+  value       = module.network.network_self_link
+  description = "VPC (network) self link"
+}
 output "gke_zones" {
   value       = google_container_cluster.gke.node_locations
   description = "List of zones where the cluster lives"
 }
 output "nat_ip" {
-  value = google_compute_address.cloud_nat_address.*.address
+  value       = google_compute_address.cloud_nat_address.*.address
+  description = "The IP address allocated for NAT"
+}
+output "subnetwork_name" {
+  value       = module.network.subnets_names.0
+  description = "Name of the subnetwork"
 }

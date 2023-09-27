@@ -25,20 +25,45 @@ module "gke" {
   subnet_network = "10.1.0.0/20"
   regional = false
   zones = ["europe-central2-a"]
-  node_pools = [
-    {
-      name = "default-pool"
+  node_pools = {
+    default-pool = {
       disk_size_gb = 50
       max_count = 3
       preemptible = true
     }
-  ]
+  }
 }
 ```
 
 By default, it creates a "private" GKE cluster, but this can be changed setting `enable_private_nodes` to `false`.
 This module is based on opinionated google modules, but combines several modules into "one module to rule them all".
 It uses the `private-cluster-update-variant` submodule of GKE - the version which can creates private cluster and - in case of node pool changes - creates new pool before deleting the old one, which minimizes the downtime of the live system.
+
+## Node pools variable
+The `node_pools` is a map of objects, where the node pool name is a key. Possible values:
+
+| Name | Description                                                                                                                                                                                                                                                                                                                                                                 | Default |
+|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| image_type | The image type used to create the nodes. The possible values are COS_CONTAINERD, COS, UBUNTU_CONTAINERD, UBUNTU. NOTE : COS AND UBUNTU are deprecated as of GKE 1.24                                                                                                                                                                                                        | COS_CONTAINERD |
+| machine_type | The name of a Google Compute Engine machine type.                                                                                                                                                                                                                                                                                                                           | e2-medium |
+| min_cpu_platform | Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or newer CPU platform. Applicable values are the friendly names of CPU platforms, such as Intel Haswell. See the [official documentation](https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform) for more information.                                  | "" |
+| local_ssd_count | Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. Each local SSD is 375 GB in size. If zero, it means to disable using local SSDs as ephemeral storage.                                                                                                                                                                                          | 0 |
+| disk_size_gb | Size of the disk attached to each node, specified in GB.                                                                                                                                                                                                                                                                                                                    | 100 |
+| disk_type | Type of the disk attached to each node (e.g. 'pd-standard', 'pd-ssd' or 'pd-balanced').                                                                                                                                                                                                                                                                                                                                                                            | pd-standard |
+| preemptible | A boolean that represents whether or not the underlying node VMs are preemptible                                                                                                                                                                                                                                                                                            | false |
+| spot | A boolean that represents whether the underlying node VMs are spot.                                                                                                                                                                                                                                                                                                         | false |
+| labels | The Kubernetes labels (key/value pairs) to be applied to each node. The kubernetes.io/ and k8s.io/ prefixes are reserved by Kubernetes Core components and cannot be specified.                                                                                                                                                                                             | {} |
+| oauth_scopes | The set of Google API scopes to be made available on all of the node VMs under the "default" service account. Use the "https://www.googleapis.com/auth/cloud-platform" scope to grant access to all APIs. It is recommended that you set service_account to a non-default service account and grant IAM roles to that service account for only the resources that it needs. | var.default_node_pools_oauth_scopes |
+| service_account | The service account to be used by the Node VMs. If not specified, the "default" service account is used.                                                                                                                                                                                                                                                                                                                                                                            | null |
+| taint | A list of Kubernetes taints to apply to nodes. Each taint consist of `key`, `value` and the effect, which must be one of NO_SCHEDULE, PREFER_NO_SCHEDULE, and NO_EXECUTE.                                                                                                                                                                                                   | [] | 
+
+
+
+
+## Autopilot support
+This module supports the autopilot GKE cluster. To create the autopilot cluster:
+- set the `enable_autopilot` to `true`
+- set the `node_pools` variable to empty list `[]`
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -49,17 +74,17 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 4.76.0 |
-| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | 4.76.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.84.0 |
+| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | 4.84.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cloud_nat"></a> [cloud\_nat](#module\_cloud\_nat) | registry.terraform.io/terraform-google-modules/cloud-nat/google | 2.2.0 |
-| <a name="module_network"></a> [network](#module\_network) | registry.terraform.io/terraform-google-modules/network/google | 5.0.0 |
-| <a name="module_project"></a> [project](#module\_project) | registry.terraform.io/terraform-google-modules/project-factory/google | 13.0.0 |
-| <a name="module_project_services"></a> [project\_services](#module\_project\_services) | registry.terraform.io/terraform-google-modules/project-factory/google//modules/project_services | 13.0.0 |
+| <a name="module_cloud_nat"></a> [cloud\_nat](#module\_cloud\_nat) | registry.terraform.io/terraform-google-modules/cloud-nat/google | 4.0.0 |
+| <a name="module_network"></a> [network](#module\_network) | registry.terraform.io/terraform-google-modules/network/google | 7.1.0 |
+| <a name="module_project"></a> [project](#module\_project) | registry.terraform.io/terraform-google-modules/project-factory/google | 14.2.1 |
+| <a name="module_project_services"></a> [project\_services](#module\_project\_services) | terraform-google-modules/project-factory/google//modules/project_services | 14.2.1 |
 
 ## Resources
 
@@ -75,12 +100,12 @@ No requirements.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_activate_apis"></a> [activate\_apis](#input\_activate\_apis) | List of Google APIs activated in new or existing project. | `list(string)` | <pre>[<br>  "compute.googleapis.com",<br>  "container.googleapis.com"<br>]</pre> | no |
-| <a name="input_additional_node_pool_oauth_scopes"></a> [additional\_node\_pool\_oauth\_scopes](#input\_additional\_node\_pool\_oauth\_scopes) | Node pool oauth scopes added to specified node pool in addition to default\_node\_pool\_oauth\_scopes. It's referenced by node\_pool `name` | `map(list(string))` | <pre>{<br>  "default-node-pool": []<br>}</pre> | no |
 | <a name="input_billing_account"></a> [billing\_account](#input\_billing\_account) | YOU NEED TO HAVE PERMISSION TO BILLING ACCOUNT, The billing account to witch the new project should be connected. Required if `create_project` set to `true`. | `string` | `""` | no |
 | <a name="input_create_project"></a> [create\_project](#input\_create\_project) | Defines if create the project. All resources are created this project. If `false` - the project\_id is required. | `bool` | `false` | no |
-| <a name="input_default_node_pools_oauth_scopes"></a> [default\_node\_pools\_oauth\_scopes](#input\_default\_node\_pools\_oauth\_scopes) | Default node pool oauth scopes added to all node pools | `list(string)` | <pre>[<br>  "https://www.googleapis.com/auth/devstorage.read_only",<br>  "https://www.googleapis.com/auth/cloud-platform",<br>  "https://www.googleapis.com/auth/logging.write",<br>  "https://www.googleapis.com/auth/monitoring",<br>  "https://www.googleapis.com/auth/compute"<br>]</pre> | no |
+| <a name="input_default_node_pools_oauth_scopes"></a> [default\_node\_pools\_oauth\_scopes](#input\_default\_node\_pools\_oauth\_scopes) | Default node pool oauth scopes added to all node pools | `list(string)` | <pre>[<br>  "https://www.googleapis.com/auth/cloud-platform"<br>]</pre> | no |
 | <a name="input_default_pool_machine_type"></a> [default\_pool\_machine\_type](#input\_default\_pool\_machine\_type) | In some cases the GKE won't be created unless the default pool uses specific machine type (for example confidential nodes) so we have to set the type even if the default pool is removed. | `string` | `"e2-small"` | no |
 | <a name="input_disable_services_on_destroy"></a> [disable\_services\_on\_destroy](#input\_disable\_services\_on\_destroy) | Whether project services will be disabled when the resources are destroyed. | `bool` | `true` | no |
+| <a name="input_enable_autopilot"></a> [enable\_autopilot](#input\_enable\_autopilot) | Whether to enable Autopilot feature | `bool` | `null` | no |
 | <a name="input_enable_confidential_nodes"></a> [enable\_confidential\_nodes](#input\_enable\_confidential\_nodes) | Whether to enable confidential nodes. | `bool` | `false` | no |
 | <a name="input_enable_private_endpoint"></a> [enable\_private\_endpoint](#input\_enable\_private\_endpoint) | Defines if create private endpoint. It disables the public endpoint so the cluster is accessible only from VPC. | `bool` | `false` | no |
 | <a name="input_enable_private_nodes"></a> [enable\_private\_nodes](#input\_enable\_private\_nodes) | Defines if use private nodes. Implies creation of cloud NAT service so nodes and pods can access public internet. | `bool` | `true` | no |
@@ -88,8 +113,7 @@ No requirements.
 | <a name="input_k8s_network_base"></a> [k8s\_network\_base](#input\_k8s\_network\_base) | The IP CIDR base for pods and services secondary networks. Must not overlap with `subnet_network`. Must be a `/16` network. | `string` | n/a | yes |
 | <a name="input_master_authorized_networks"></a> [master\_authorized\_networks](#input\_master\_authorized\_networks) | Allows accessing masters only from defined networks. If `enable_private_endpoint` is `true` it must not be any public CIDR block. | `list(map(string))` | <pre>[<br>  {<br>    "cidr_block": "0.0.0.0/0",<br>    "display_name": "ALL"<br>  }<br>]</pre> | no |
 | <a name="input_master_ipv4_cidr_block"></a> [master\_ipv4\_cidr\_block](#input\_master\_ipv4\_cidr\_block) | The /28 CIDR block for masters when using private cluster. | `string` | `"172.16.0.0/28"` | no |
-| <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | List of node pools. For parameter details refer to node\_pool variable table below | `list(any)` | <pre>[<br>  {<br>    "name": "default-node-pool"<br>  }<br>]</pre> | no |
-| <a name="input_node_pools_labels"></a> [node\_pools\_labels](#input\_node\_pools\_labels) | List of node pools labels. https://registry.terraform.io/modules/terraform-google-modules/kubernetes-engine/google/21.1.0/submodules/private-cluster-update-variant?tab=inputs#:~:text=default%2Dnode%2Dpool%22%20%7D%20%5D-,node_pools_labels,-map(map(string | `map(map(string))` | <pre>{<br>  "default-node-pool": {<br>    "node.pool/name": "default-node-pool"<br>  }<br>}</pre> | no |
+| <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | The object which describes the node pools. The structure is described in the README file. | `map(map(any))` | `{}` | no |
 | <a name="input_org_id"></a> [org\_id](#input\_org\_id) | GCP organization id. Required if `create_project` is `true`. | `string` | `""` | no |
 | <a name="input_platform_name"></a> [platform\_name](#input\_platform\_name) | The name of the platform. Many resource names are based on this (VPC, subnet, GKE cluster etc). | `string` | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Existing project id. Required if `create_project` set to `false` | `string` | `""` | no |
@@ -98,6 +122,7 @@ No requirements.
 | <a name="input_regional"></a> [regional](#input\_regional) | Defines the type of the GKE cluster. If `true` - the cluster is created as `regional`. Otherwise - as `zonal`. | `bool` | `true` | no |
 | <a name="input_release_channel"></a> [release\_channel](#input\_release\_channel) | The GKE release channel. | `string` | `"UNSPECIFIED"` | no |
 | <a name="input_subnet_network"></a> [subnet\_network](#input\_subnet\_network) | The IP CIDR of the network for the GKE nodes. Must not overlap with `k8s_network_base`. | `string` | n/a | yes |
+| <a name="input_subnet_private_access"></a> [subnet\_private\_access](#input\_subnet\_private\_access) | Whether to enable google private IP access for the subnet | `bool` | `true` | no |
 | <a name="input_zones"></a> [zones](#input\_zones) | List of zones for `zonal` cluster. Required if `regional` set to `false`. | `list(string)` | `[]` | no |
 
 ## Outputs
@@ -110,10 +135,12 @@ No requirements.
 | <a name="output_gke_endpoint"></a> [gke\_endpoint](#output\_gke\_endpoint) | The kubernetes endpoint |
 | <a name="output_gke_location"></a> [gke\_location](#output\_gke\_location) | Location of the GKE cluster. Region if cluster is regional, zone if zonal |
 | <a name="output_gke_zones"></a> [gke\_zones](#output\_gke\_zones) | List of zones where the cluster lives |
-| <a name="output_nat_ip"></a> [nat\_ip](#output\_nat\_ip) | n/a |
+| <a name="output_nat_ip"></a> [nat\_ip](#output\_nat\_ip) | The IP address allocated for NAT |
 | <a name="output_project_id"></a> [project\_id](#output\_project\_id) | ID of the project containing the cluster |
+| <a name="output_subnetwork_name"></a> [subnetwork\_name](#output\_subnetwork\_name) | Name of the subnetwork |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | VPC (network) ID |
 | <a name="output_vpc_name"></a> [vpc\_name](#output\_vpc\_name) | Name of the created VPC (network) |
+| <a name="output_vpc_self_link"></a> [vpc\_self\_link](#output\_vpc\_self\_link) | VPC (network) self link |
 <!-- END_TF_DOCS -->
 
 ## node_pools variable
