@@ -1,5 +1,5 @@
 locals {
-  project_id            = var.create_project ? module.project.0.project_id : var.project_id
+  project_id            = var.create_project ? module.project.0.project_id : module.project_services.0.project_id
   project_name          = var.project_name != "" ? var.project_name : var.platform_name
   subnet_name           = "${var.platform_name}-subnet"
   router                = "${var.platform_name}-router"

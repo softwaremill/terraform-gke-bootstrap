@@ -19,20 +19,25 @@ variable "region" {
 }
 variable "project_id" {
   type        = string
-  default     = ""
+  default     = null
   description = "Existing project id. Required if `create_project` set to `false`"
   validation {
-    condition     = (var.project_id == "" || can(regex("^[a-z]{1}[0-9a-z-]{5,29}$", var.project_id)))
+    condition     = var.project_id == null || can(regex("^[a-z]{1}[0-9a-z-]{5,29}$", var.project_id))
     error_message = "The project id must be 6 to 30 characters in length, can only contain lowercase letters, numbers, and hyphens"
   }
 }
 variable "project_name" {
   type        = string
-  default     = ""
+  default     = null
   description = "The name of the created project. Defaults to `platform_name` if not set."
   validation {
-    condition     = (var.project_name == "" || length(var.project_name) < 25 && length(var.project_name) > 4)
-    error_message = "The project name should contain only 25 characters. Last 5 characters up to 30 total are generated"
+
+    # condition     = (var.project_name == "" || length(var.project_name) < 25 && length(var.project_name) > 4)
+    # error_message = "The project name should contain only 25 characters. Last 5 characters up to 30 total are generated"
+
+    condition     = var.project_name == null || (can(length(var.project_name) < 25) && can(length(var.project_name) > 4))
+    error_message = "The project name should contain more than 4 and less then 25 characters. Last 5 characters up to 30 total are generated"
+
   }
 }
 variable "release_channel" {
@@ -72,7 +77,7 @@ variable "zones" {
 }
 
 variable "node_pools" {
-  type        = map(map(any))
+  type        = any
   default     = {}
   description = "The object which describes the node pools. The structure is described in the README file."
 }
