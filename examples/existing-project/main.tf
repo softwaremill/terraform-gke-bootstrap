@@ -17,7 +17,7 @@ module "gke" {
     },
     other-pool = {
       disk_size_gb = 100
-      preemptible = true
+      preemptible  = true
     }
   }
 }
