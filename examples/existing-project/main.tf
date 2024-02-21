@@ -14,6 +14,10 @@ module "gke" {
       disk_size_gb = 50
       max_count    = 3
       preemptible  = true
+    },
+    other-pool = {
+      disk_size_gb = 100
+      preemptible = true
     }
   }
 }

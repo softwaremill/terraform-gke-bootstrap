@@ -3,7 +3,6 @@ package test
 import (
 	"context"
 	"encoding/base64"
-	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -16,18 +15,19 @@ import (
 	"google.golang.org/api/container/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	networkingv1 "k8s.io/api/networking/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/utils/pointer"
 )
 
-
-
 func createRestConfig(cluster *container.Cluster, ctx context.Context) (*rest.Config, error) {
 	tokenSource, err := google.DefaultTokenSource(ctx, "https://www.googleapis.com/auth/cloud-platform")
+	if err != nil {
+		return nil, err
+	}
 	token, err := tokenSource.Token()
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func createTestDeployment(clientset *kubernetes.Clientset, deplName string) (*ap
 				Spec: apiv1.PodSpec{
 					Tolerations: []apiv1.Toleration{
 						{
-							Key: "test",
+							Key:   "test",
 							Value: "test",
 						},
 					},
@@ -101,7 +101,6 @@ func createTestDeployment(clientset *kubernetes.Clientset, deplName string) (*ap
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("Deployment %s created.\n", result.Name)
 	return result, nil
 }
 
@@ -117,16 +116,14 @@ func createTestService(clientset *kubernetes.Clientset, serviceName string, depl
 				{
 					Name: "http",
 					TargetPort: intstr.IntOrString{
-						Type: intstr.Int,
+						Type:   intstr.Int,
 						IntVal: 80,
 					},
 					Port: 80,
-
 				},
-			},	
+			},
 		},
 	}
-
 
 	result, err := serviceClient.Create(context.TODO(), service, metav1.CreateOptions{})
 	if err != nil {
@@ -147,7 +144,7 @@ func createTestIngress(clientset *kubernetes.Clientset, ingressName string, serv
 						HTTP: &networkingv1.HTTPIngressRuleValue{
 							Paths: []networkingv1.HTTPIngressPath{
 								{
-									Path: "/",
+									Path:     "/",
 									PathType: &pathType,
 									Backend: networkingv1.IngressBackend{
 										Service: &networkingv1.IngressServiceBackend{
@@ -167,7 +164,7 @@ func createTestIngress(clientset *kubernetes.Clientset, ingressName string, serv
 	}
 
 	result, err := ingressClient.Create(context.TODO(), ingress, metav1.CreateOptions{})
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +181,7 @@ func testExample(t *testing.T, exampleDir string) {
 	deplName := "nginx-" + randId
 	serviceName := deplName
 	ingressName := deplName
-	
+
 	platformName := "test-platform-" + randId
 
 	terraformOptions := terraform.WithDefaultRetryableErrors(
@@ -199,10 +196,10 @@ func testExample(t *testing.T, exampleDir string) {
 
 	defer terraform.Destroy(t, terraformOptions)
 	terraform.InitAndApply(t, terraformOptions)
-	
+
 	ctx := context.Background()
 	containerService, _ := container.NewService(ctx)
-	
+
 	cluster, err := container.NewProjectsLocationsClustersService(containerService).Get(terraform.Output(t, terraformOptions, "gke_cluster_id")).Do()
 	assert.NoError(t, err)
 
@@ -222,9 +219,9 @@ func testExample(t *testing.T, exampleDir string) {
 	defer deleteIngress(k8sClientSet, ingressName)
 	ingress, err := createTestIngress(k8sClientSet, ingressName, serviceName)
 	assert.NoError(t, err)
-		
+
 	kubectlOptions := k8s.NewKubectlOptionsWithRestConfig(restConfig, apiv1.NamespaceDefault)
-	
+
 	k8s.WaitUntilDeploymentAvailable(t, kubectlOptions, deployment.Name, 20, 10*time.Second)
 	k8s.WaitUntilServiceAvailable(t, kubectlOptions, service.Name, 10, 10*time.Second)
 	k8s.WaitUntilIngressAvailable(t, kubectlOptions, ingress.Name, 30, 10*time.Second)
