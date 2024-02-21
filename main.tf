@@ -1,17 +1,19 @@
 module "project" {
-  source            = "registry.terraform.io/terraform-google-modules/project-factory/google"
-  version           = "14.2.1"
-  billing_account   = var.billing_account
-  name              = var.platform_name
-  org_id            = var.org_id
-  random_project_id = true
-  activate_apis     = var.activate_apis
-  count             = var.create_project ? 1 : 0
+  source                      = "registry.terraform.io/terraform-google-modules/project-factory/google"
+  version                     = "14.4.0"
+  billing_account             = var.billing_account
+  name                        = var.platform_name
+  org_id                      = var.org_id
+  random_project_id           = true
+  activate_apis               = var.activate_apis
+  default_service_account     = "keep"
+  disable_services_on_destroy = var.disable_services_on_destroy
+  count                       = var.create_project ? 1 : 0
 }
 
 module "project_services" {
   source                      = "terraform-google-modules/project-factory/google//modules/project_services"
-  version                     = "14.2.1"
+  version                     = "14.4.0"
   project_id                  = var.project_id
   activate_apis               = var.activate_apis
   disable_services_on_destroy = var.disable_services_on_destroy
@@ -44,9 +46,6 @@ module "network" {
       }
     ]
   }
-  depends_on = [
-    module.project_services.project_id
-  ]
 }
 
 resource "google_compute_address" "cloud_nat_address" {
@@ -54,9 +53,6 @@ resource "google_compute_address" "cloud_nat_address" {
   project = local.project_id
   region  = var.region
   count   = var.enable_private_nodes ? 1 : 0
-  depends_on = [
-    module.project_services.project_id
-  ]
 }
 
 module "cloud_nat" {
@@ -70,9 +66,6 @@ module "cloud_nat" {
   name          = local.cloud_nat_name
   nat_ips       = [google_compute_address.cloud_nat_address.0.self_link]
   count         = var.enable_private_nodes ? 1 : 0
-  depends_on = [
-    module.project_services.project_id
-  ]
 }
 
 resource "google_container_cluster" "gke" {
@@ -92,7 +85,8 @@ resource "google_container_cluster" "gke" {
     enabled = var.enable_confidential_nodes
   }
   lifecycle {
-    ignore_changes = [initial_node_count, node_config]
+    ignore_changes        = [initial_node_count, node_config]
+    create_before_destroy = false
   }
   depends_on = [
     module.network.subnets
