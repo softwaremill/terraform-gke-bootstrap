@@ -55,5 +55,6 @@ jobs:
         env:
           TF_VAR_org_id: ${{ secrets.ORG_ID }}
           TF_VAR_billing_account: ${{ secrets.BILLING_ACCOUNT }}
+          TF_VAR_project_id: ${{ secrets.PROJECT_ID }}
         run: go test -v -timeout 30m -skip TestNewProject
         working-directory: test

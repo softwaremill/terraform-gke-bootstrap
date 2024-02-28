@@ -1,6 +1,7 @@
 module "gke" {
   source           = "../../"
-  create_project   = true
+  create_project   = false
+  project_id       = var.project_id
   enable_autopilot = true
   billing_account  = var.billing_account
   org_id           = var.org_id
