@@ -161,3 +161,11 @@ resource "google_container_registry" "registry" {
   project  = local.project_id
   location = var.gcr_location
 }
+
+resource "google_artifact_registry_repository" "my-repo" {
+  count         = var.create_artifact_registry ? 1 : 0
+  location      = var.region
+  repository_id = "my-repository"
+  description   = "Docker repository"
+  format        = "DOCKER"
+}
