@@ -52,5 +52,8 @@ jobs:
           project_id: 'sml-internal'
           workload_identity_provider: 'projects/1071668732006/locations/global/workloadIdentityPools/github/providers/terraform-gke-bootstrap'
       - name: Run Terratest
+        env:
+          TF_VAR_org_id: ${{ secrets.ORG_ID }}
+          TF_VAR_billing_account: ${{ secrets.BILLING_ACCOUNT }}
         run: go test -v -timeout 30m
         working-directory: test
