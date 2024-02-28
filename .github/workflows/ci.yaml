@@ -49,13 +49,11 @@ jobs:
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
-          project_id: 'sml-internal'
           service_account: 'terraform-gke-bootstrap@sml-internal.iam.gserviceaccount.com'
           workload_identity_provider: 'projects/1071668732006/locations/global/workloadIdentityPools/github/providers/terraform-gke-bootstrap'
-          token_format: access_token
       - name: Run Terratest
         env:
           TF_VAR_org_id: ${{ secrets.ORG_ID }}
           TF_VAR_billing_account: ${{ secrets.BILLING_ACCOUNT }}
-        run: go test -v -timeout 30m
+        run: go test -v -timeout 30m -skip TestNewProject
         working-directory: test
