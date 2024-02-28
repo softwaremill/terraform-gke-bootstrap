@@ -11,17 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: ${{ github.event_name == 'push' }}
         with:
           ref: ${{ github.ref_name }}
       - name: Setup terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v3
       - name: Terraform Init
         run: terraform init
       - name: Terraform Format
@@ -32,3 +32,28 @@ jobs:
           config-file: .terraform-docs.yml
           working-dir: .
           git-push: "true"
+  terratest:
+    needs: ["terraform"]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          cache-dependency-path: test/go.sum
+          go-version-file: test/go.mod
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/1071668732006/locations/global/workloadIdentityPools/github/providers/terraform-gke-bootstrap'
+      - name: Run Terratest
+        env:
+          TF_VAR_org_id: ${{ secrets.ORG_ID }}
+          TF_VAR_billing_account: ${{ secrets.BILLING_ACCOUNT }}
+          TF_VAR_project_id: ${{ secrets.PROJECT_ID }}
+        run: go test -v -timeout 30m -skip TestNewProject
+        working-directory: test
