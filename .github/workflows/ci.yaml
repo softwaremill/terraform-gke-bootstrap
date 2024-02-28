@@ -49,7 +49,6 @@ jobs:
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
-          service_account: 'terraform-gke-bootstrap@sml-internal.iam.gserviceaccount.com'
           workload_identity_provider: 'projects/1071668732006/locations/global/workloadIdentityPools/github/providers/terraform-gke-bootstrap'
       - name: Run Terratest
         env:
