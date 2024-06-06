@@ -156,8 +156,3 @@ resource "google_container_node_pool" "pools" {
     create_before_destroy = true
   }
 }
-
-resource "google_container_registry" "registry" {
-  project  = local.project_id
-  location = var.gcr_location
-}
