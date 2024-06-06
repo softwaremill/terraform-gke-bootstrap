@@ -10,6 +10,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/container/v1"
@@ -21,6 +22,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/utils/pointer"
+	"k8s.io/apimachinery/pkg/api/errors"
+
 )
 
 func createRestConfig(cluster *container.Cluster, ctx context.Context) (*rest.Config, error) {
@@ -171,9 +174,29 @@ func createTestIngress(clientset *kubernetes.Clientset, ingressName string, serv
 	return result, nil
 }
 
-func deleteIngress(clientset *kubernetes.Clientset, ingressName string) {
+func deleteIngress(t *testing.T, clientset *kubernetes.Clientset, ingressName string) error {
 	ingressClient := clientset.NetworkingV1().Ingresses(apiv1.NamespaceDefault)
-	ingressClient.Delete(context.TODO(), ingressName, metav1.DeleteOptions{})
+	logger.Log(t, "Deleting ingress: %s", ingressName)
+	ctx := context.TODO()
+	if err := ingressClient.Delete(ctx, ingressName, metav1.DeleteOptions{}); err != nil {
+		logger.Log(t, "Failed to delete ingress: %s", ingressName)
+	}
+	for {
+		_, err := clientset.NetworkingV1().Ingresses(apiv1.NamespaceDefault).Get(ctx, ingressName, metav1.GetOptions{})
+		if err != nil {
+				if errors.IsNotFound(err) {
+						logger.Log(t, "Ingress %s has been deleted.\n", ingressName)
+						break
+				}
+				return err
+		}
+
+		// Wait for a while before checking again
+		logger.Log(t, "Waiting for Ingress %s to be deleted...\n", ingressName)
+		time.Sleep(2 * time.Second)
+}
+
+return nil
 }
 
 func testExample(t *testing.T, exampleDir string) {
@@ -216,7 +239,7 @@ func testExample(t *testing.T, exampleDir string) {
 	assert.NoError(t, err)
 
 	// Remove ingress to avoid existing NEG after cluster deletion
-	defer deleteIngress(k8sClientSet, ingressName)
+	defer deleteIngress(t, k8sClientSet, ingressName)
 	ingress, err := createTestIngress(k8sClientSet, ingressName, serviceName)
 	assert.NoError(t, err)
 
