@@ -161,3 +161,9 @@ variable "create_artifact_registry" {
   default     = false
   description = "Whether to create Artifact Registry for docker images"
 }
+
+variable "artifact_registry_name" {
+  type        = string
+  default     = "my-repository"
+  description = "The name of the artifact registry repository"
+}

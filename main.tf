@@ -157,15 +157,10 @@ resource "google_container_node_pool" "pools" {
   }
 }
 
-resource "google_container_registry" "registry" {
-  project  = local.project_id
-  location = var.gcr_location
-}
-
 resource "google_artifact_registry_repository" "my-repo" {
   count         = var.create_artifact_registry ? 1 : 0
   location      = var.region
-  repository_id = "my-repository"
+  repository_id = var.artifact_registry_name
   description   = "Docker repository"
   format        = "DOCKER"
 }
