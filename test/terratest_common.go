@@ -179,20 +179,20 @@ func deleteIngress(t *testing.T, clientset *kubernetes.Clientset, ingressName st
 	logger.Log(t, "Deleting ingress: %s", ingressName)
 	ctx := context.TODO()
 	if err := ingressClient.Delete(ctx, ingressName, metav1.DeleteOptions{}); err != nil {
-		logger.Log(t, "Failed to delete ingress: %s", ingressName)
+		logger.Logf(t, "Failed to delete ingress: %s", ingressName)
 	}
 	for {
 		_, err := clientset.NetworkingV1().Ingresses(apiv1.NamespaceDefault).Get(ctx, ingressName, metav1.GetOptions{})
 		if err != nil {
 				if errors.IsNotFound(err) {
-						logger.Log(t, "Ingress %s has been deleted.\n", ingressName)
+						logger.Logf(t, "Ingress %s has been deleted.\n", ingressName)
 						break
 				}
 				return err
 		}
 
 		// Wait for a while before checking again
-		logger.Log(t, "Waiting for Ingress %s to be deleted...\n", ingressName)
+		logger.Logf(t, "Waiting for Ingress %s to be deleted...\n", ingressName)
 		time.Sleep(2 * time.Second)
 }
 
@@ -239,7 +239,12 @@ func testExample(t *testing.T, exampleDir string) {
 	assert.NoError(t, err)
 
 	// Remove ingress to avoid existing NEG after cluster deletion
-	defer deleteIngress(t, k8sClientSet, ingressName)
+	defer func() {
+		err := deleteIngress(t, k8sClientSet, ingressName)
+		if err != nil {
+			t.Errorf("Failed to delete ingress: %s", ingressName)
+		}
+	}()
 	ingress, err := createTestIngress(k8sClientSet, ingressName, serviceName)
 	assert.NoError(t, err)
 
