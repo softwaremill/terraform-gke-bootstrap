@@ -10,4 +10,5 @@ module "gke" {
   subnet_network              = "10.1.0.0/20"
   regional                    = true
   node_pools                  = {}
+  cluster_deletion_protection = false
 }

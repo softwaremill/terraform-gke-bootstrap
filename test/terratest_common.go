@@ -195,7 +195,7 @@ func deleteIngress(t *testing.T, clientset *kubernetes.Clientset, ingressName st
 		time.Sleep(10 * time.Second)
 	}
 	// Give some time for the ingress to be fully deleted (NEGs are deleted asynchronously)
-	time.Sleep(60 * time.Second)
+	time.Sleep(150 * time.Second)
 
 	return nil
 }

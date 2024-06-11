@@ -78,6 +78,7 @@ resource "google_container_cluster" "gke" {
   remove_default_node_pool = var.enable_autopilot == null ? true : null
   enable_autopilot         = var.enable_autopilot
   initial_node_count       = 1
+  deletion_protection      = var.cluster_deletion_protection
   node_config {
     machine_type = var.default_pool_machine_type
   }
