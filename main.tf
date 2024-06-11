@@ -132,7 +132,15 @@ resource "google_container_node_pool" "pools" {
     labels           = lookup(each.value, "labels", {})
     oauth_scopes     = lookup(each.value, "oauth_scopes", var.default_node_pools_oauth_scopes)
     service_account  = lookup(each.value, "service_account", null)
-    taint            = lookup(each.value, "taint", [])
+
+    dynamic "taint" {
+      for_each = lookup(each.value, "taints", [])
+      content {
+        key    = each.key
+        value  = each.value
+        effect = each.taint
+      }
+    }
 
     dynamic "guest_accelerator" {
       for_each = lookup(each.value, "guest_accelerator", null) != null ? [1] : []
