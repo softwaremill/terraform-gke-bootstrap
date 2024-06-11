@@ -1,6 +1,6 @@
 module "project" {
   source                      = "registry.terraform.io/terraform-google-modules/project-factory/google"
-  version                     = "14.4.0"
+  version                     = "15.0.1"
   billing_account             = var.billing_account
   name                        = var.platform_name
   org_id                      = var.org_id
@@ -13,7 +13,7 @@ module "project" {
 
 module "project_services" {
   source                      = "terraform-google-modules/project-factory/google//modules/project_services"
-  version                     = "14.4.0"
+  version                     = "15.0.1"
   project_id                  = var.project_id
   activate_apis               = var.activate_apis
   disable_services_on_destroy = var.disable_services_on_destroy
@@ -22,7 +22,7 @@ module "project_services" {
 
 module "network" {
   source                  = "registry.terraform.io/terraform-google-modules/network/google"
-  version                 = "7.1.0"
+  version                 = "9.1.0"
   network_name            = var.platform_name
   project_id              = local.project_id
   auto_create_subnetworks = false
@@ -57,7 +57,7 @@ resource "google_compute_address" "cloud_nat_address" {
 
 module "cloud_nat" {
   source        = "registry.terraform.io/terraform-google-modules/cloud-nat/google"
-  version       = "4.0.0"
+  version       = "5.1.0"
   project_id    = local.project_id
   region        = var.region
   network       = module.network.network_name
