@@ -111,7 +111,7 @@ variable "activate_apis" {
   type = list(string)
   default = [
     "compute.googleapis.com",
-    "container.googleapis.com"
+    "container.googleapis.com",
   ]
   description = "List of Google APIs activated in new or existing project."
 }
@@ -154,4 +154,22 @@ variable "subnet_private_access" {
   type        = bool
   default     = true
   description = "Whether to enable google private IP access for the subnet"
+}
+
+variable "create_artifact_registry" {
+  type        = bool
+  default     = false
+  description = "Whether to create Artifact Registry for docker images"
+}
+
+variable "artifact_registry_name" {
+  type        = string
+  default     = "my-repository"
+  description = "The name of the artifact registry repository"
+}
+
+variable "cluster_deletion_protection" {
+  type        = bool
+  default     = true
+  description = "Whether or not to allow Terraform to destroy the cluster. Unless this field is set to false in Terraform state, a terraform destroy or terraform apply that would delete the cluster will fail."
 }

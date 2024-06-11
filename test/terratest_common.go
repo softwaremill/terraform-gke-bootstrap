@@ -15,7 +15,6 @@ import (
 	"google.golang.org/api/container/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
-	networkingv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
@@ -132,55 +131,10 @@ func createTestService(clientset *kubernetes.Clientset, serviceName string, depl
 	return result, nil
 }
 
-func createTestIngress(clientset *kubernetes.Clientset, ingressName string, servicName string) (*networkingv1.Ingress, error) {
-	ingressClient := clientset.NetworkingV1().Ingresses(apiv1.NamespaceDefault)
-	pathType := networkingv1.PathTypePrefix
-	ingress := &networkingv1.Ingress{
-		ObjectMeta: metav1.ObjectMeta{Name: ingressName},
-		Spec: networkingv1.IngressSpec{
-			Rules: []networkingv1.IngressRule{
-				{
-					IngressRuleValue: networkingv1.IngressRuleValue{
-						HTTP: &networkingv1.HTTPIngressRuleValue{
-							Paths: []networkingv1.HTTPIngressPath{
-								{
-									Path:     "/",
-									PathType: &pathType,
-									Backend: networkingv1.IngressBackend{
-										Service: &networkingv1.IngressServiceBackend{
-											Name: servicName,
-											Port: networkingv1.ServiceBackendPort{
-												Number: 80,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-	result, err := ingressClient.Create(context.TODO(), ingress, metav1.CreateOptions{})
-
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func deleteIngress(clientset *kubernetes.Clientset, ingressName string) {
-	ingressClient := clientset.NetworkingV1().Ingresses(apiv1.NamespaceDefault)
-	ingressClient.Delete(context.TODO(), ingressName, metav1.DeleteOptions{})
-}
-
 func testExample(t *testing.T, exampleDir string) {
 	randId := strings.ToLower(random.UniqueId())
 	deplName := "nginx-" + randId
 	serviceName := deplName
-	ingressName := deplName
 
 	platformName := "test-platform-" + randId
 
@@ -215,14 +169,8 @@ func testExample(t *testing.T, exampleDir string) {
 	service, err := createTestService(k8sClientSet, serviceName, deplName)
 	assert.NoError(t, err)
 
-	// Remove ingress to avoid existing NEG after cluster deletion
-	defer deleteIngress(k8sClientSet, ingressName)
-	ingress, err := createTestIngress(k8sClientSet, ingressName, serviceName)
-	assert.NoError(t, err)
-
 	kubectlOptions := k8s.NewKubectlOptionsWithRestConfig(restConfig, apiv1.NamespaceDefault)
 
 	k8s.WaitUntilDeploymentAvailable(t, kubectlOptions, deployment.Name, 20, 10*time.Second)
 	k8s.WaitUntilServiceAvailable(t, kubectlOptions, service.Name, 10, 10*time.Second)
-	k8s.WaitUntilIngressAvailable(t, kubectlOptions, ingress.Name, 30, 10*time.Second)
 }

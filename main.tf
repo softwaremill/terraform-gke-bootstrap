@@ -78,6 +78,7 @@ resource "google_container_cluster" "gke" {
   remove_default_node_pool = var.enable_autopilot == null ? true : null
   enable_autopilot         = var.enable_autopilot
   initial_node_count       = 1
+  deletion_protection      = var.cluster_deletion_protection
   node_config {
     machine_type = var.default_pool_machine_type
   }
@@ -163,4 +164,12 @@ resource "google_container_node_pool" "pools" {
     ignore_changes        = [initial_node_count]
     create_before_destroy = true
   }
+}
+
+resource "google_artifact_registry_repository" "my-repo" {
+  count         = var.create_artifact_registry ? 1 : 0
+  location      = var.region
+  repository_id = var.artifact_registry_name
+  description   = "Docker repository"
+  format        = "DOCKER"
 }
