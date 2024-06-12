@@ -13,11 +13,11 @@ resource "google_compute_address" "cloud_nat_address" {
 }
 
 resource "google_compute_router_nat" "main" {
-  project                             = var.project_id
-  region                              = var.region
-  name                                = var.name
-  router                              = google_compute_router.router.0.name
-  nat_ip_allocate_option              = "MANUAL_ONLY"
-  nat_ips                             = [google_compute_address.cloud_nat_address.self_link]
-  source_subnetwork_ip_ranges_to_nat  = var.source_subnetwork_ip_ranges_to_nat
+  project                            = var.project_id
+  region                             = var.region
+  name                               = var.name
+  router                             = local.router
+  nat_ip_allocate_option             = "MANUAL_ONLY"
+  nat_ips                            = [google_compute_address.cloud_nat_address.self_link]
+  source_subnetwork_ip_ranges_to_nat = var.source_subnetwork_ip_ranges_to_nat
 }

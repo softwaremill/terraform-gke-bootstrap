@@ -1,21 +1,27 @@
 variable "create_router" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
+  description = "Whether to create router or use the existing one."
 }
 variable "router" {
-  type = string
+  type        = string
+  description = "The name of the router to create or the existing one."
 }
 variable "project_id" {
-  type = string
+  type        = string
+  description = "GCP project where to create the resources."
 }
 variable "region" {
-  type = string
+  type        = string
+  description = "The GCP region."
 }
 variable "network" {
-  type = string
+  type        = string
+  description = "The VPC name."
 }
 variable "name" {
-  type = string
+  type        = string
+  description = "The name of the NAT router."
 }
 variable "source_subnetwork_ip_ranges_to_nat" {
   type        = string
