@@ -49,13 +49,13 @@ module "network" {
 }
 
 module "cloud_nat" {
-  source        = "./modules/cloud-nat"
-  project_id    = local.project_id
-  region        = var.region
-  network       = module.network.network_name
-  router        = local.router
-  name          = local.cloud_nat_name
-  count         = var.enable_private_nodes ? 1 : 0
+  source     = "./modules/cloud-nat"
+  project_id = local.project_id
+  region     = var.region
+  network    = module.network.network_name
+  router     = local.router
+  name       = local.cloud_nat_name
+  count      = var.enable_private_nodes ? 1 : 0
 }
 
 resource "google_container_cluster" "gke" {
