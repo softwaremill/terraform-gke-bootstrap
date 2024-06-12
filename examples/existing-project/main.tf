@@ -10,6 +10,7 @@ module "gke" {
   regional                    = false
   zones                       = ["europe-central2-a"]
   cluster_deletion_protection = false
+  enable_private_nodes        = true
   node_pools = {
     default-pool = {
       disk_size_gb = 50

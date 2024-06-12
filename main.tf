@@ -48,24 +48,14 @@ module "network" {
   }
 }
 
-resource "google_compute_address" "cloud_nat_address" {
-  name    = local.cloud_nat_name
-  project = local.project_id
-  region  = var.region
-  count   = var.enable_private_nodes ? 1 : 0
-}
-
 module "cloud_nat" {
-  source        = "registry.terraform.io/terraform-google-modules/cloud-nat/google"
-  version       = "5.1.0"
-  project_id    = local.project_id
-  region        = var.region
-  network       = module.network.network_name
-  create_router = true
-  router        = local.router
-  name          = local.cloud_nat_name
-  nat_ips       = [google_compute_address.cloud_nat_address.0.self_link]
-  count         = var.enable_private_nodes ? 1 : 0
+  source     = "./modules/cloud-nat"
+  project_id = local.project_id
+  region     = var.region
+  network    = module.network.network_name
+  router     = local.router
+  name       = local.cloud_nat_name
+  count      = var.enable_private_nodes ? 1 : 0
 }
 
 resource "google_container_cluster" "gke" {
