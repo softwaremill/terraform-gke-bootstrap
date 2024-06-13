@@ -136,6 +136,10 @@ resource "google_container_node_pool" "pools" {
       }
     }
 
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
+
     dynamic "guest_accelerator" {
       for_each = lookup(each.value, "guest_accelerator", null) != null ? [1] : []
       content {
