@@ -145,7 +145,9 @@ resource "google_container_node_pool" "pools" {
         effect = each.taint
       }
     }
-
+    network_config {
+      enable_private_nodes = var.enable_private_nodes
+    }
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
