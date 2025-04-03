@@ -134,6 +134,7 @@ resource "google_container_node_pool" "pools" {
     preemptible      = lookup(each.value, "preemptible", false)
     spot             = lookup(each.value, "spot", false)
     labels           = lookup(each.value, "labels", {})
+    resource_labels  = lookup(each.value, "resource_labels", {})
     oauth_scopes     = lookup(each.value, "oauth_scopes", var.default_node_pools_oauth_scopes)
     service_account  = lookup(each.value, "service_account", null)
 
@@ -142,7 +143,7 @@ resource "google_container_node_pool" "pools" {
       content {
         key    = lookup(taint.value, "key", "taint")
         value  = lookup(taint.value, "value", "true")
-        effect = lookup(taint.value, "effect", "NoSchedule")
+        effect = lookup(taint.value, "effect", "NO_SCHEDULE")
       }
     }
 
