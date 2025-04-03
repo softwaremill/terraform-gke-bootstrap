@@ -140,7 +140,7 @@ resource "google_container_node_pool" "pools" {
     dynamic "taint" {
       for_each = lookup(each.value, "taints", [])
       content {
-        key    = taint.value.key
+        key    = lookup(taint.value, "key", "taint")
         value  = lookup(taint.value, "value", "true")
         effect = lookup(taint.value, "effect", "NoSchedule")
       }
