@@ -141,7 +141,7 @@ resource "google_container_node_pool" "pools" {
       for_each = lookup(each.value, "taints", [])
       content {
         key    = taint.value.key
-        value  = taint.value.value
+        value  = lookup(taint.value, "value", "true")
         effect = lookup(taint.value, "effect", "NoSchedule")
       }
     }
