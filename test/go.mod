@@ -1,12 +1,13 @@
 module github.com/softwaremill/terraform-gke-bootstrap
 
-go 1.21
+go 1.23.0
+
 toolchain go1.24.1
 
 require (
 	github.com/gruntwork-io/terratest v0.46.6
 	github.com/stretchr/testify v1.8.1
-	golang.org/x/oauth2 v0.7.0
+	golang.org/x/oauth2 v0.27.0
 	google.golang.org/api v0.114.0
 	k8s.io/api v0.27.2
 	k8s.io/apimachinery v0.27.2
@@ -16,8 +17,7 @@ require (
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
-	cloud.google.com/go/compute v1.19.1 // indirect
-	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	cloud.google.com/go/iam v0.13.0 // indirect
 	cloud.google.com/go/storage v1.28.1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
