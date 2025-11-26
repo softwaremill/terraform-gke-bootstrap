@@ -173,3 +173,13 @@ variable "cluster_deletion_protection" {
   default     = true
   description = "Whether or not to allow Terraform to destroy the cluster. Unless this field is set to false in Terraform state, a terraform destroy or terraform apply that would delete the cluster will fail."
 }
+
+variable "gateway_api_config_channel" {
+  type        = string
+  default     = null
+  description = "The Gateway API channel to use for the cluster. Valid values are CHANNEL_DISABLED, CHANNEL_EXPERIMENTAL, CHANNEL_STANDARD. Set to null to disable the Gateway API configuration block."
+  validation {
+    condition     = var.gateway_api_config_channel == null || contains(["CHANNEL_DISABLED", "CHANNEL_EXPERIMENTAL", "CHANNEL_STANDARD"], var.gateway_api_config_channel)
+    error_message = "Valid values for gateway_api_config_channel are: CHANNEL_DISABLED, CHANNEL_EXPERIMENTAL, CHANNEL_STANDARD, or null."
+  }
+}

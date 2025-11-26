@@ -99,6 +99,12 @@ resource "google_container_cluster" "gke" {
   workload_identity_config {
     workload_pool = "${var.project_id}.svc.id.goog"
   }
+  dynamic "gateway_api_config" {
+    for_each = var.gateway_api_config_channel != null ? [1] : []
+    content {
+      channel = var.gateway_api_config_channel
+    }
+  }
 }
 
 resource "google_container_node_pool" "pools" {
