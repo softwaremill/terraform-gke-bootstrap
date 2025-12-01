@@ -99,6 +99,12 @@ resource "google_container_cluster" "gke" {
   workload_identity_config {
     workload_pool = "${var.project_id}.svc.id.goog"
   }
+  dynamic "gateway_api_config" {
+    for_each = var.gateway_api_config_channel != null ? [1] : []
+    content {
+      channel = var.gateway_api_config_channel
+    }
+  }
 }
 
 resource "google_container_node_pool" "pools" {
@@ -134,15 +140,16 @@ resource "google_container_node_pool" "pools" {
     preemptible      = lookup(each.value, "preemptible", false)
     spot             = lookup(each.value, "spot", false)
     labels           = lookup(each.value, "labels", {})
+    resource_labels  = lookup(each.value, "resource_labels", {})
     oauth_scopes     = lookup(each.value, "oauth_scopes", var.default_node_pools_oauth_scopes)
     service_account  = lookup(each.value, "service_account", null)
 
     dynamic "taint" {
       for_each = lookup(each.value, "taints", [])
       content {
-        key    = taint.value.key
-        value  = taint.value.value
-        effect = lookup(taint.value, "effect", "NoSchedule")
+        key    = lookup(taint.value, "key", "taint")
+        value  = lookup(taint.value, "value", "true")
+        effect = lookup(taint.value, "effect", "NO_SCHEDULE")
       }
     }
 
